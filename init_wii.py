@@ -9,6 +9,7 @@ def connect():
         wii = cwiid.Wiimote()
     except(RuntimeError):
         print 'Failed to connect ... is Bluetooth on?'
+        raise
     
     print 'Connection successful'
 
