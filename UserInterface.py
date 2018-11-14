@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-milestone1.py
+UserInterface.py
 
 Open a Pygame window and display framerate.
 Program terminates by pressing the ESCAPE-Key.
@@ -31,7 +31,7 @@ ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam  Peters']
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
-FPS = 60.0
+FPS = 30.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
 WINDOW_SIZE = (1440,900)
 
@@ -39,23 +39,23 @@ pygame.init()
 
 if(pygame.joystick.get_count() == 0):
     print('please connect a controller')
-    raise SystemExit
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-joystick = pygame.joystick.Joystick(0)
-joystick.init()
-name = joystick.get_name()
-print(name)
-axes = joystick.get_numaxes()
-buttons = joystick.get_numbuttons()
-hats = joystick.get_numhats()
+else:
+    os.environ['SDL_VIDEO_CENTERED'] = '1'
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
+    name = joystick.get_name()
+    print(name)
+    axes = joystick.get_numaxes()
+    buttons = joystick.get_numbuttons()
+    hats = joystick.get_numhats()
 
-print("There is " + str(axes) + " axes")
-print("There is " + str(buttons) + " button/s")
-print("There is " + str(hats) + " hat/s")
+    print("There is " + str(axes) + " axes")
+    print("There is " + str(buttons) + " button/s")
+    print("There is " + str(hats) + " hat/s")
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption('Milestone 1')
+pygame.display.set_caption('SoundClowns')
 clock = pygame.time.Clock()
 dt = 1 / FPS
 
@@ -98,7 +98,7 @@ def shape_fun(shape):
     while True:
 
         # Clock tick
-        clock.tick(60)
+        clock.tick(30)
 
         # Application events
         shapeevents = pygame.event.get()
@@ -190,7 +190,7 @@ main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 while True:
 
     # Tick
-    clock.tick(60)
+    clock.tick(30)
 
     # Application events
     events = pygame.event.get()
