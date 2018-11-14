@@ -26,12 +26,16 @@ def connect():
 def poll(wii):
     try:
         old_state = wii.state
+        t0 = time.time()
         while(True):
             b_pressed = (wii.state.get('buttons') == 4)
             current_state = wii.state
             if b_pressed and (old_state != current_state):
                 print(wii.state)
                 old_state = current_state
+                dt = time.time() - t0
+                t0 = time.time()
+                print(dt)
     except(KeyboardInterrupt):
         print('Quitting...')
 
