@@ -1,10 +1,10 @@
 {
     "acc": [
-        134, 
-        118, 
+        126, 
+        117, 
         149
     ], 
-    "battery": 156, 
+    "battery": 152, 
     "buttons": 0, 
     "error": 0, 
     "ext_type": 0, 
@@ -14,7 +14,7 @@
         null, 
         null
     ], 
-    "led": 0, 
+    "led": 1, 
     "rpt_mode": 14, 
     "rumble": 0
 }

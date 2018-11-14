@@ -12,9 +12,9 @@ def connect():
         raise
     
     print 'Connection successful'
-
     # print initial state
     wii.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
+    wii.led = 1
     time.sleep(1) # let the sensors wake up
     print 'Initial state:  ' + str(wii.state)
 
