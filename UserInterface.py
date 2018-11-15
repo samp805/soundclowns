@@ -14,12 +14,14 @@ License: GPL, see http://www.gnu.org/licenses/gpl.html
 """
 
 #the next line is only needed for python2.x and not necessary for python3.x
-# Import pygame and libraries
+#import pygame and libraries
 from pygame.locals import *
 from random import randrange
 import os
 import pygame
 import pygameMenu
+import cwiid
+import json
 from pygameMenu.locals import *
 
 ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
