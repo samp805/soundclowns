@@ -18,6 +18,7 @@ License: GPL, see http://www.gnu.org/licenses/gpl.html
 from pygame.locals import *
 from random import randrange
 import os
+import time
 import pygame
 import pygameMenu
 import cwiid
@@ -38,22 +39,6 @@ MENU_BACKGROUND_COLOR = (228, 55, 36)
 WINDOW_SIZE = (1440,900)
 
 pygame.init()
-
-if(pygame.joystick.get_count() == 0):
-    print('please connect a controller')
-else:
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-    name = joystick.get_name()
-    print(name)
-    axes = joystick.get_numaxes()
-    buttons = joystick.get_numbuttons()
-    hats = joystick.get_numhats()
-
-    print("There is " + str(axes) + " axes")
-    print("There is " + str(buttons) + " button/s")
-    print("There is " + str(hats) + " hat/s")
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -80,7 +65,30 @@ def main_background():
     :return: None
     """
     surface.fill(COLOR_BACKGROUND)
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------
+def connect():
+    _ = raw_input('Press enter after pressing 1 + 2 on Wiimote\n')
+    try:
+        wii = cwiid.Wiimote()
+    except(RuntimeError):
+        print 'Failed to connect ... is Bluetooth on?'
+        raise
+    
+    print 'Connection successful'
+    # print initial state
+    wii.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
+    wii.led = 1
+    time.sleep(1) # let the sensors wake up
+    print 'Initial state:  ' + str(wii.state)
+
+    with open('./data/example.json', 'w+') as f:
+        f.write(json.dumps(wii.state, sort_keys=True, indent=4))
+
+    return wii
+#-----------------------------------------------------------------------
+def mapwii(wii)
+    
+#-----------------------------------------------------------------------
 def shape_fun(shape):
     """
     Function used to draw shapes with a given selector
@@ -178,11 +186,8 @@ main_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
-main_menu.add_option('Draw', shape_fun, SHAPE)
-main_menu.add_selector('Select shape', [('Circle', 'CIRCLE'),
-                                        ('Rectangle', 'RECTANGLE')],
-                       onreturn=None,
-                       onchange=change_shape)
+main_menu.add_option('Start', shape_fun, SHAPE)
+#main_menu.add_option('Tutorial',)
 main_menu.add_option('About Us', about_us_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
