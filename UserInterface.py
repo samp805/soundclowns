@@ -47,43 +47,22 @@ except(RuntimeError):
     
 print 'Connection successful'
 # print initial state
-wii.enable(1)
 wii.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wii.led = 1
 time.sleep(1) # let the sensors wake up
-if(pygame.joystick.get_count() == 0):
-    print('please connect a controller')
-else:
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-    name = joystick.get_name()
-    print(name)
-    axes = joystick.get_numaxes()
-    buttons = joystick.get_numbuttons()
-    hats = joystick.get_numhats()
-
-    print("There is " + str(axes) + " axes")
-    print("There is " + str(buttons) + " button/s")
-    print("There is " + str(hats) + " hat/s")
 
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption('SoundClowns')
 clock = pygame.time.Clock()
 dt = 1 / FPS
-
-SHAPE = ['CIRCLE']
+UPPRESS = USEREVENT + 1
+DOWNPRESS = USEREVENT + 2
+#-----------------------------------------------------------------------
+def poll(wii):
+    if 
 
 # -----------------------------------------------------------------------------
-def change_shape(s):
-    """
-    Change shape to display
-
-    :return:
-    """
-    print ('Selected Shape: {0}'.format(s))
-    SHAPE[0] = s
 
 def main_background():
     """
@@ -132,17 +111,7 @@ def shape_fun(shape):
 
 
         # Pass events to main_menu
-        main_menu.mainloop(shapeevents)
         surface.fill(bg_color)
-        if shape == 'CIRCLE':
-            pygame.display.flip()
-            pygame.draw.circle(surface, COLOR_BLACK, (500, 500), 100, 0)
-        elif shape == 'RECTANGLE':
-
-            pygame.display.flip()
-            pygame.draw.rect(surface, COLOR_BLACK, [500,250,500,250])
-        else:
-            raise Exception('Unknown shape {0}'.format(shape))
         pygame.display.flip()
 
 # -----------------------------------------------------------------------------

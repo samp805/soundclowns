@@ -29,6 +29,7 @@ def poll(wii):
         old_state = wii.state
         t0 = time.time()
         while(True):
+            
             b_pressed = (wii.state.get('buttons') == 4)
             current_state = wii.state
             if b_pressed and (old_state != current_state):
