@@ -25,10 +25,6 @@ import time
 import json
 from pygameMenu.locals import *
 
-ABOUT = ['PygameMenu {0}'.format(pygameMenu.__version__),
-         'Author: {0}'.format(pygameMenu.__author__),
-         PYGAMEMENU_TEXT_NEWLINE,
-         'Email: {0}'.format(pygameMenu.__email__)]
 ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam  Peters']
 
 COLOR_BACKGROUND = (128, 0, 128)
@@ -39,28 +35,11 @@ MENU_BACKGROUND_COLOR = (228, 55, 36)
 WINDOW_SIZE = (1440,900)
 
 pygame.init()
-try:
-    wii = cwiid.Wiimote()
-except(RuntimeError):
-    print 'Failed to connect ... is Bluetooth on?'
-    raise
-    
-print 'Connection successful'
-# print initial state
-wii.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
-wii.led = 1
-time.sleep(1) # let the sensors wake up
-
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption('SoundClowns')
 clock = pygame.time.Clock()
 dt = 1 / FPS
-UPPRESS = USEREVENT + 1
-DOWNPRESS = USEREVENT + 2
-#-----------------------------------------------------------------------
-def poll(wii):
-    if 
 
 # -----------------------------------------------------------------------------
 
@@ -159,15 +138,11 @@ main_menu = pygameMenu.Menu(surface,
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
-main_menu.add_option('Draw', shape_fun, SHAPE)
-main_menu.add_selector('Select shape', [('Circle', 'CIRCLE'),
-                                        ('Rectangle', 'RECTANGLE')],
-                       onreturn=None,
-                       onchange=change_shape)
 main_menu.add_option('About Us', about_us_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 # -----------------------------------------------------------------------------
+
 
 # Main loop
 while True:
