@@ -40,20 +40,9 @@ from sys import exit
 
 import cwiid
 import time
+ 
+POLL = _pygame.locals.USEREVENT
 
-NOEVENT = _pygame.locals.USEREVENT + 0 
-UPPRESS = _pygame.locals.USEREVENT + 1
-print(UPPRESS)
-DOWNPRESS = _pygame.locals.USEREVENT + 2
-print(DOWNPRESS)
-RIGHTPRESS = _pygame.locals.USEREVENT + 3
-LEFTPRESS = _pygame.locals.USEREVENT + 4
-APRESS = _pygame.locals.USEREVENT + 5
-BPRESS = _pygame.locals.USEREVENT + 6
-PLUSPRESS = _pygame.locals.USEREVENT + 7
-MINUSPRESS = _pygame.locals.USEREVENT + 8
-HOMEPRESS = _pygame.locals.USEREVENT + 9
-buttons = [UPPRESS, DOWNPRESS]
 #-----------------------------------------------------------------------
 
     
@@ -70,30 +59,7 @@ wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wiimote.led = 1
 time.sleep(1) # let the sensors wake up
     
-def poll(wii):
-    buttonpress = wii.state.get('buttons')
-    if buttonpress == 2048:
-        print('up')
-        return UPPRESS
-    elif buttonpress == 1024:
-        print('down')
-        return DOWNPRESS
-    elif buttonpress == 512:
-        return RIGHTPRESS
-    elif buttonpress == 256:
-        return LEFTPRESS
-    elif buttonpress == 8:
-        return APRESS
-    elif buttonpress == 4:
-        return BPRESS
-    elif buttonpress == 16:
-        return MINUSPRESS
-    elif buttonpress == 4096:
-        return PLUSPRESS
-    elif buttonpress == 128:
-        return HOMEPRESS
-    else:
-        return NOEVENT
+
 
 # noinspection PyBroadException
 class Menu(object):
@@ -593,30 +559,33 @@ class Menu(object):
         :param events: Pygame events
         :return: None
         """
-        
+        button = 0
         if self._actual._dopause:  # If menu pauses game then apply function
             self._bgfun()
         self.draw()
-        _pygame.time.set_timer(poll(wiimote),500)
+        _pygame.event.post(_pygame.event.Event(_pygame.locals.USEREVENT))
         if events is None:
             events = _pygame.event.get()
-        for event in events:
-            
+        for event in  events:
+            _pygame.event.post(_pygame.event.Event(_pygame.locals.USEREVENT))
             # noinspection PyUnresolvedReferences
             if event.type == _pygame.locals.QUIT:
                 _pygame.quit()
                 exit()
-            elif event.type == UPPRESS:
-                self._up()
+            elif event.type == POLL:
+                button = wiimote.state.get('buttons')
                 
-            elif event.type == DOWNPRESS:
-                self._down()
-                
-            elif event.type == (_pygame.locals.USEREVENT + 3):
-                self._right()
-                
-            elif event.type == (_pygame.locals.USEREVENT + 4):
-                self._left()
+                if button ==  2048:
+                    self._up()
+                    
+                    
+                elif button == 1024:
+                    
+                    self._down()
+                    
+                button = 0
+                _pygame.time.wait(150)
+                _pygame.event.clear(POLL)
             elif event.type == _pygame.locals.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_DOWN:
                     self._down()
@@ -881,3 +850,4 @@ class Menu(object):
                 'First element of value list component must be a string'
 
         self._actual._option[selector_id][1].update_elements(values)
+

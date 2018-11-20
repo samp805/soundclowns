@@ -25,6 +25,8 @@ import time
 import json
 from pygameMenu.locals import *
 
+
+
 ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam  Peters']
 
 COLOR_BACKGROUND = (128, 0, 128)
@@ -35,6 +37,12 @@ MENU_BACKGROUND_COLOR = (228, 55, 36)
 WINDOW_SIZE = (1440,900)
 
 pygame.init()
+if(pygame.joystick.get_count() == 0):
+    print('No controller connected')
+else:
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
+    
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption('SoundClowns')
