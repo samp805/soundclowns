@@ -1,6 +1,7 @@
 import cwiid
 import time
 import json
+import pygame
 
 
 def connect():
@@ -13,6 +14,7 @@ def connect():
     
     print 'Connection successful'
     # print initial state
+    
     wii.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
     wii.led = 1
     time.sleep(1) # let the sensors wake up
@@ -45,7 +47,3 @@ def cleanup(wii):
     del wii
     print 'Wii disconnected'
 
-if __name__ == "__main__":
-    wii = connect()
-    poll(wii)
-    cleanup(wii)
