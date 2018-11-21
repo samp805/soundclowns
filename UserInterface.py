@@ -26,22 +26,34 @@ import json
 from pygameMenu.locals import *
 
 
+POLL = pygame.USEREVENT
+_ = raw_input('Press enter after pressing 1 + 2 on Wiimote\n')
+try:
+    wiimote = cwiid.Wiimote()
+except(RuntimeError):
+    print 'Failed to connect ... is Bluetooth on?'
+    raise
+    
+print 'Connection successful'
+# print initial state
+wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
+wiimote.led = 1
+time.sleep(1) # let the sensors wake up
 
 ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam Peters']
 
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
+COLOR_GREEN = (0, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 30.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
 WINDOW_SIZE = (1440,900)
 
+
+
 pygame.init()
-if(pygame.joystick.get_count() == 0):
-    print('No controller connected')
-else:
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
+
     
 # Create pygame screen and objects
 surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -59,30 +71,29 @@ def main_background():
     """
     surface.fill(COLOR_BACKGROUND)
 # -----------------------------------------------------------------------------
-def shape_fun(shape):
+def wiidata(wm):
     """
-    Function used to draw shapes with a given selector
-    :param shape: Name of shape to be drawn
+    Function used to get wiimote data and write as to json
+    :param wmstate: wiimote state dictionary
     :return: None
     """
-
-    shape = shape[0]
-    assert isinstance(shape, str)
-
 
     main_menu.disable()
     main_menu.reset(1)
 
-    bg_color = (255,0,0)
+    bg_color = (30,30,200)
 
     while True:
 
         # Clock tick
         clock.tick(30)
-
+    
         # Application events
-        shapeevents = pygame.event.get()
-        for e in shapeevents:
+        button = wm.state.get('buttons')
+        pygame.event.post(pygame.event.Event(POLL)) 
+        wmevents = pygame.event.get()
+        for e in wmevents:
+            pygame.event.post(pygame.event.Event(POLL)) 
             if e.type == QUIT:
                 exit()
             elif e.type == KEYDOWN  :
@@ -90,11 +101,16 @@ def shape_fun(shape):
                     main_menu.enable()
 
                     return
-            elif e.type == JOYBUTTONDOWN:
-                if e.button == JOY_BUTTON_BACK and main_menu.is_disabled():
-                    main_menu.enable()
+            elif e.type == POLL:
+                button = wm.state.get('buttons')
+                if button == 4:
+                    pygame.display.flip()
+                    pygame.draw.circle(surface, COLOR_GREEN, (500, 500), 100, 0)
+                else:
+                    pygame.display.flip()
+                    pygame.draw.circle(surface, COLOR_BLACK, (500, 500), 100, 0)
 
-                    return
+                    
 
 
         # Pass events to main_menu
@@ -144,8 +160,11 @@ main_menu = pygameMenu.Menu(surface,
                             joystick_enabled= True,
                             title='Sound Clowns',
                             window_height=WINDOW_SIZE[1],
-                            window_width=WINDOW_SIZE[0]
+                            window_width=WINDOW_SIZE[0],
+                            wiimote=wiimote
                             )
+
+main_menu.add_option('Start', wiidata, wiimote)
 main_menu.add_option('About Us', about_us_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 

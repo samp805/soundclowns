@@ -41,23 +41,17 @@ from sys import exit
 import cwiid
 import time
  
+
 POLL = _pygame.locals.USEREVENT
+
+
+# ----------------------------------------------------------------------
+
 
 #-----------------------------------------------------------------------
 
     
-_ = raw_input('Press enter after pressing 1 + 2 on Wiimote\n')
-try:
-    wiimote = cwiid.Wiimote()
-except(RuntimeError):
-    print 'Failed to connect ... is Bluetooth on?'
-    raise
-    
-print 'Connection successful'
-# print initial state
-wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
-wiimote.led = 1
-time.sleep(1) # let the sensors wake up
+
     
 
 
@@ -96,7 +90,8 @@ class Menu(object):
                  option_shadow=_cfg.MENU_OPTION_SHADOW,
                  rect_width=_cfg.MENU_SELECTED_WIDTH,
                  title_offsetx=0,
-                 title_offsety=0
+                 title_offsety=0,
+                 wiimote = None
                  ):
         """
         Menu constructor.
@@ -223,7 +218,7 @@ class Menu(object):
         self._sel_color = color_selected
         self._surface = surface
         self._width = menu_width
-
+        self._wiimote = wiimote
         # Inner variables
         self._actual = self  # Actual menu
         self._closelocked = False  # Lock close until next mainloop
@@ -270,6 +265,7 @@ class Menu(object):
             _pygame.joystick.init()
             for i in range(_pygame.joystick.get_count()):
                 _pygame.joystick.Joystick(i).init()
+   
 
     def add_option(self, element_name, element, *args):
         """
@@ -551,6 +547,7 @@ class Menu(object):
         :rtype: bool
         """
         return self._enabled
+            
 
     def _main(self, events=None):
         """
@@ -563,17 +560,17 @@ class Menu(object):
         if self._actual._dopause:  # If menu pauses game then apply function
             self._bgfun()
         self.draw()
-        _pygame.event.post(_pygame.event.Event(_pygame.locals.USEREVENT))
+        _pygame.event.post(_pygame.event.Event(POLL))
         if events is None:
             events = _pygame.event.get()
         for event in  events:
-            _pygame.event.post(_pygame.event.Event(_pygame.locals.USEREVENT))
+            _pygame.event.post(_pygame.event.Event(POLL))
             # noinspection PyUnresolvedReferences
             if event.type == _pygame.locals.QUIT:
                 _pygame.quit()
                 exit()
             elif event.type == POLL:
-                button = wiimote.state.get('buttons')
+                button = self._wiimote.state.get('buttons')
                 
                 if button ==  2048: # up arrow
                     self._up()
