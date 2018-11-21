@@ -389,7 +389,7 @@ class Menu(object):
         :return: Selector ID
         :rtype: int
         """
-        return self.add_selector(title=title, values=values, onchange=None,
+        return self.add_selector(title=title, values=values, onchange=True,
                                  onreturn=fun, kwargs=kwargs)
 
     def disable(self):
@@ -575,13 +575,15 @@ class Menu(object):
             elif event.type == POLL:
                 button = wiimote.state.get('buttons')
                 
-                if button ==  2048:
+                if button ==  2048: # up arrow
                     self._up()
                     
-                    
-                elif button == 1024:
+                elif button == 1024: # down arrow
                     
                     self._down()
+
+                elif button == 8: # A button
+                    self._select()
                     
                 button = 0
                 _pygame.time.wait(150)
