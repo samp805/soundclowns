@@ -27,21 +27,6 @@ from pygameMenu.locals import *
 
 
 POLL = pygame.USEREVENT
-_ = raw_input('Press enter after pressing 1 + 2 on Wiimote\n')
-try:
-    wiimote = cwiid.Wiimote()
-except(RuntimeError):
-    print 'Failed to connect ... is Bluetooth on?'
-    raise
-    
-print 'Connection successful'
-# print initial state
-wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
-wiimote.led = 1
-time.sleep(1) # let the sensors wake up
-
-with open('./data/example.json', 'w+') as f:
-    f.write(json.dumps(wiimote.state, sort_keys=True, indent=4))
 
 ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam Peters']
 
@@ -51,18 +36,48 @@ COLOR_GREEN = (0, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 30.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
-WINDOW_SIZE = (1440,900)
+
 
 
 
 pygame.init()
-
+pygame.font.init()
     
 # Create pygame screen and objects
-surface = pygame.display.set_mode(WINDOW_SIZE)
+surface = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+x = surface.get_width()
+y = surface.get_height()
+WINDOW_SIZE = (x,y)
 pygame.display.set_caption('SoundClowns')
+surface.fill(COLOR_BACKGROUND)
 clock = pygame.time.Clock()
 dt = 1 / FPS
+myfont = pygame.font.Font(pygameMenu.fonts.FONT_BEBAS, 30)
+startsurface = myfont.render('Press enter after pressing 1 + 2  on  Wiimote', False, (0,0,0))
+surface.blit(startsurface,(x/2-x/4,y/2))
+pygame.display.update()
+try:
+    wiimote = cwiid.Wiimote()
+except(RuntimeError):
+    surface.fill(COLOR_BACKGROUND)
+    failsurface = myfont.render('Failed to connect ... is Bluetooth on?', False, (0,0,0))
+    surface.blit(failsurface,(x/2-x/4,y/2))
+    pygame.display.update()
+    time.sleep(5)
+    raise
+successsurface = myfont.render('Connection Successful', False, (0,0,0))
+surface.blit(successsurface,(x/2-x/4,y/2+y/4))
+pygame.display.update()    
+
+# print initial state
+wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
+wiimote.led = 1
+time.sleep(1) # let the sensors wake up
+
+with open('./data/example.json', 'w+') as f:
+    f.write(json.dumps(wiimote.state, sort_keys=True, indent=4))
+
+
 
 # -----------------------------------------------------------------------------
 
@@ -105,7 +120,6 @@ def wiidata(wm):
             elif e.type == KEYDOWN  :
                 if e.key == K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
-
                     return
             elif e.type == POLL:
                 current_state = wm.state
@@ -121,6 +135,7 @@ def wiidata(wm):
                         print(dt)
                 elif button == 128 and main_menu.is_disabled():
                     main_menu.enable()
+                    return
                 else:
                     pygame.display.flip()
                     pygame.event.clear(POLL)

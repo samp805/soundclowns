@@ -43,17 +43,7 @@ import time
  
 
 POLL = _pygame.locals.USEREVENT
-
-
-# ----------------------------------------------------------------------
-
-
-#-----------------------------------------------------------------------
-
-    
-
-    
-
+  
 
 # noinspection PyBroadException
 class Menu(object):
