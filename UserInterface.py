@@ -30,9 +30,10 @@ POLL = pygame.USEREVENT
 
 ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam Peters']
 
-COLOR_BACKGROUND = (128, 0, 128)
+COLOR_BACKGROUND = (128, 32, 128)
 COLOR_BLACK = (0, 0, 0)
 COLOR_GREEN = (0, 255, 0)
+COLOR_RED = (255, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 30.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
@@ -99,7 +100,7 @@ def wiidata(wm):
     main_menu.disable()
     main_menu.reset(1)
 
-    bg_color = (30,30,200)
+    bg_color = COLOR_BACKGROUND
     old_state = wm.state
     t0 = time.time()
 
@@ -126,13 +127,24 @@ def wiidata(wm):
                 button = wm.state.get('buttons')
                 if (button == 4):
                     pygame.display.flip()
-                    pygame.draw.circle(surface, COLOR_GREEN, (500, 500), 100, 0)
                     if (old_state != current_state):
                         print(wm.state)
                         old_state = current_state
                         dt = time.time() - t0
                         t0 = time.time()
                         print(dt)
+                    try:
+                        pygame.draw.circle(surface, COLOR_GREEN, (100, 100), 50, 0)
+                        xcoord = current_state['ir_src'][0]['pos'][0]
+                        ycoord = current_state['ir_src'][0]['pos'][1]
+                        xcoord = (xcoord/1024.0)*x
+                        ycoord = (ycoord/768.0)*y
+                        pygame.draw.circle(surface, COLOR_BLACK, (xcoord,ycoord),50,0)
+                        
+                    except:
+                        pygame.draw.circle(surface, COLOR_GREEN, (100, 100), 50, 0)
+                        
+                        
                 elif button == 128 and main_menu.is_disabled():
                     main_menu.enable()
                     return
@@ -145,7 +157,7 @@ def wiidata(wm):
 
         # Pass events to main_menu
         surface.fill(bg_color)
-        pygame.draw.circle(surface, COLOR_BLACK, (500, 500), 100, 0)
+        pygame.draw.circle(surface, COLOR_BLACK, (100, 100), 50, 0)
         pygame.display.flip()
 
 # -----------------------------------------------------------------------------
