@@ -572,10 +572,10 @@ class Menu(object):
             elif event.type == POLL:
                 button = self._wiimote.state.get('buttons')
                 
-                if button ==  2048: # up arrow
+                if button ==  1024: # up arrow
                     self._up()
                     
-                elif button == 1024: # down arrow
+                elif button == 2048: # down arrow
                     
                     self._down()
 

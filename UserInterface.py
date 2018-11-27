@@ -40,6 +40,9 @@ wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wiimote.led = 1
 time.sleep(1) # let the sensors wake up
 
+with open('./data/example.json', 'w+') as f:
+    f.write(json.dumps(wiimote.state, sort_keys=True, indent=4))
+
 ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam Peters']
 
 COLOR_BACKGROUND = (128, 0, 128)
@@ -82,18 +85,21 @@ def wiidata(wm):
     main_menu.reset(1)
 
     bg_color = (30,30,200)
+    old_state = wm.state
+    t0 = time.time()
 
     while True:
 
         # Clock tick
         clock.tick(30)
-    
+        
         # Application events
+        
         button = wm.state.get('buttons')
         pygame.event.post(pygame.event.Event(POLL)) 
         wmevents = pygame.event.get()
         for e in wmevents:
-            pygame.event.post(pygame.event.Event(POLL)) 
+            pygame.event.post(pygame.event.Event(POLL))
             if e.type == QUIT:
                 exit()
             elif e.type == KEYDOWN  :
@@ -102,19 +108,29 @@ def wiidata(wm):
 
                     return
             elif e.type == POLL:
+                current_state = wm.state
                 button = wm.state.get('buttons')
-                if button == 4:
+                if (button == 4):
                     pygame.display.flip()
                     pygame.draw.circle(surface, COLOR_GREEN, (500, 500), 100, 0)
+                    if (old_state != current_state):
+                        print(wm.state)
+                        old_state = current_state
+                        dt = time.time() - t0
+                        t0 = time.time()
+                        print(dt)
+                elif button == 128 and main_menu.is_disabled():
+                    main_menu.enable()
                 else:
                     pygame.display.flip()
-                    pygame.draw.circle(surface, COLOR_BLACK, (500, 500), 100, 0)
+                    pygame.event.clear(POLL)
 
-                    
+                                    
 
 
         # Pass events to main_menu
         surface.fill(bg_color)
+        pygame.draw.circle(surface, COLOR_BLACK, (500, 500), 100, 0)
         pygame.display.flip()
 
 # -----------------------------------------------------------------------------
