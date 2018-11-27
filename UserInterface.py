@@ -37,6 +37,9 @@ COLOR_RED = (255, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 30.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
+xmax = 1024
+ymax = 768
+tolerance = 20
 
 
 
@@ -90,6 +93,28 @@ def main_background():
     """
     surface.fill(COLOR_BACKGROUND)
 # -----------------------------------------------------------------------------
+def wait_for_b_press(wii):
+    while(True):
+        if (wii.state['buttons'] == 4):
+            return True
+
+def calibrate(wii):
+    print('Gently move around the Wiimote to find the center')
+    center = (xmax/2, ymax/2)
+    in_center = False
+    close = False
+    while(not in_center):
+        current_state = wii.state
+        try:
+            xcoord = current_state['ir_src'][0]['pos'][0]
+            ycoord = current_state['ir_src'][0]['pos'][1]
+        except TypeError: # means you moved out of the frame
+            continue
+        in_center = (abs(xcoord - center[0]) < tolerance) and (abs(ycoord-center[1]) < tolerance)
+
+    print('Found the center: {} ... stay there'.format(wii.state))
+    return
+
 def wiidata(wm):
     """
     Function used to get wiimote data and write as to json
@@ -100,9 +125,11 @@ def wiidata(wm):
     main_menu.disable()
     main_menu.reset(1)
 
+    # have the user find the center
+    calibrate(wm)
+    #KYLE: let the user know it's been calibrated
     bg_color = COLOR_BACKGROUND
     old_state = wm.state
-    t0 = time.time()
 
     while True:
 
@@ -123,26 +150,45 @@ def wiidata(wm):
                     main_menu.enable()
                     return
             elif e.type == POLL:
-                current_state = wm.state
-                button = wm.state.get('buttons')
-                if (button == 4):
-                    pygame.display.flip()
-                    if (old_state != current_state):
-                        print(wm.state)
-                        old_state = current_state
-                        dt = time.time() - t0
-                        t0 = time.time()
-                        print(dt)
-                    try:
-                        pygame.draw.circle(surface, COLOR_GREEN, (100, 100), 50, 0)
-                        xcoord = current_state['ir_src'][0]['pos'][0]
-                        ycoord = current_state['ir_src'][0]['pos'][1]
-                        xcoord = (xcoord/1024.0)*x
-                        ycoord = (ycoord/768.0)*y
-                        pygame.draw.circle(surface, COLOR_BLACK, (xcoord,ycoord),50,0)
-                        
-                    except:
-                        pygame.draw.circle(surface, COLOR_GREEN, (100, 100), 50, 0)
+                # KYLE: let them know to hold down B & get started
+                try:
+                    old_state = wm.state
+                    last_valid = (xmax/2, ymax/2)
+                    run = True
+                    while(run):
+                        wait_for_b_press(wm)
+                        b_pressed = (wm.state.get('buttons') == 4)
+                        while(b_pressed):
+                            current_state = wm.state
+             
+                            if (old_state != current_state):
+                                try:
+                                    xcoord = current_state['ir_src'][0]['pos'][0]
+                                    ycoord = current_state['ir_src'][0]['pos'][1]
+                                    last_valid = (xcoord, ycoord)
+                                    # print('x:  {}, y:  {}'.format(xcoord, ycoord))
+                                except TypeError:
+                                    # hitting this means you went out of frame somewhere
+                                    # your last valid coordinates will be xcoord & ycoord
+            
+                                    if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
+                                        print('right edge')
+                                    elif(last_valid[0] < tolerance): # close to left edge
+                                        print('left edge')
+                                    elif(abs(last_valid[1]-ymax) < tolerance): # close to top
+                                        print('top edge')
+                                    elif(last_valid[1] < tolerance): # bottom edge
+                                        print('bottom edge')
+                                    else:
+                                        print('error')
+                                old_state = current_state
+            
+                            b_pressed = (wm.state.get('buttons') == 4)
+            
+            
+                        run = (raw_input('Draw again? (y/n) ') == 'y')
+                except(KeyboardInterrupt):
+                    print('Quitting...')
                         
                         
                 elif button == 128 and main_menu.is_disabled():

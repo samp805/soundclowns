@@ -1,11 +1,6 @@
 import cwiid
 import time
 import json
-import pdb
-import numpy as np
-import cv2 as cv
-import scipy.signal as sp
-import scipy.stats as ss
 
 xmax = 1024
 ymax = 768
