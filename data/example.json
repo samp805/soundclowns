@@ -1,10 +1,10 @@
 {
     "acc": [
-        125, 
-        128, 
-        155
+        122, 
+        129, 
+        150
     ], 
-    "battery": 40, 
+    "battery": 130, 
     "buttons": 0, 
     "error": 0, 
     "ext_type": 0, 

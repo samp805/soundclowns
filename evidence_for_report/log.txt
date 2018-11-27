@@ -1,0 +1,102 @@
+Press enter after pressing 1 + 2 on Wiimote
+Connection successful
+Hold B and draw a circle...
+x: 561 || y: 139
+x: 593 || y: 146
+x: 622 || y: 142
+x: 650 || y: 129
+x: 679 || y: 110
+x: 699 || y: 81
+x: 717 || y: 42
+x: 733 || y: 4
+x: 616 || y: 244
+x: 636 || y: 177
+x: 653 || y: 100
+x: 671 || y: 14
+state:  {'acc': (96, 136, 135), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (94, 135, 136), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (93, 134, 134), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (92, 135, 132), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (92, 136, 128), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (92, 137, 123), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (94, 138, 119), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (97, 139, 114), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (99, 140, 109), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (101, 141, 106), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (102, 141, 106), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (101, 141, 108), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (100, 140, 111), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (99, 139, 114), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (99, 138, 116), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (99, 137, 118), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (101, 137, 119), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (102, 137, 118), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (105, 138, 116), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (108, 139, 115), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (110, 140, 117), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (113, 140, 119), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (114, 140, 121), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (114, 140, 124), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (112, 138, 125), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (111, 136, 126), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (108, 135, 128), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (107, 134, 130), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (106, 133, 131), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (105, 132, 132), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (105, 132, 133), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (104, 131, 134), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (104, 131, 135), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (102, 130, 136), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+x: 116 || y: 588
+x: 172 || y: 557
+x: 221 || y: 515
+x: 227 || y: 489
+x: 266 || y: 430
+x: 304 || y: 362
+x: 405 || y: 246
+x: 444 || y: 161
+x: 482 || y: 71
+x: 453 || y: 19
+state:  {'acc': (94, 136, 120), 'led': 0, 'ir_src': [None, {'pos': (475, 47), 'size': 3}, {'pos': (418, 127), 'size': 2}, {'pos': (554, 31), 'size': 3}], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (94, 136, 119), 'led': 0, 'ir_src': [None, None, {'pos': (442, 33), 'size': 2}, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+state:  {'acc': (94, 136, 118), 'led': 0, 'ir_src': [None, None, None, None], 'rpt_mode': 14, 'ext_type': 0, 'buttons': 4, 'rumble': 0, 'error': 0, 'battery': 129}
+Warning: Out of frame
+here
+(-0.11338225868888531, 0.0)
+Draw again? (y/n) Wii disconnected
