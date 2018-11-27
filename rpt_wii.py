@@ -7,16 +7,9 @@ import cv2 as cv
 import scipy.signal as sp
 import scipy.stats as ss
 
-xsize = 1024
-ysize = 768
-x, y = np.indices((xsize, ysize))
-xcenter = xsize/2
-ycenter = ysize/2
-radius = 20
-circle = (x - xcenter)**2 + (y - ycenter)**2 < radius**2
-dim = (xsize,ysize)
-kernel = np.ones((5,5),np.uint8)
-
+xmax = 1024
+ymax = 768
+tolerance = 20
 
 def connect():
     _ = raw_input('Press enter after pressing 1 + 2 on Wiimote\n')
@@ -39,36 +32,60 @@ def wait_for_b_press(wii):
         if (wii.state['buttons'] == 4):
             return True
 
+def calibrate(wii):
+    print('Gently move around the Wiimote to find the center')
+    center = (xmax/2, ymax/2)
+    in_center = False
+    close = False
+    while(not in_center):
+        current_state = wii.state
+        try:
+            xcoord = current_state['ir_src'][0]['pos'][0]
+            ycoord = current_state['ir_src'][0]['pos'][1]
+        except TypeError: # means you moved out of the frame
+            continue
+        in_center = (abs(xcoord - center[0]) < tolerance) and (abs(ycoord-center[1]) < tolerance)
+
+    print('Found the center: {} ... stay there'.format(wii.state))
+    return
+
 def poll(wii):
-    print('Hold B and draw a circle...')
+    print('Hold B and make motion...')
     try:
         old_state = wii.state
+        last_valid = (xmax/2, ymax/2)
         run = True
         while(run):
-            map = np.zeros(dim)
             wait_for_b_press(wii)
             b_pressed = (wii.state.get('buttons') == 4)
             while(b_pressed):
                 current_state = wii.state
     
                 if (old_state != current_state):
-                    old_state = current_state
                     try:
                         xcoord = current_state['ir_src'][0]['pos'][0]
                         ycoord = current_state['ir_src'][0]['pos'][1]
-                        print('x: {} || y: {}'.format(xcoord,ycoord))
-                        map[xcoord,ycoord] = 1
+                        last_valid = (xcoord, ycoord)
+                        print('x:  {}, y:  {}'.format(xcoord, ycoord))
                     except TypeError:
-                        print('state:  {}'.format(wii.state))
-                        print('Warning: Out of frame')
+                        # hitting this means you went out of frame somewhere
+                        # your last valid coordinates will be xcoord & ycoord
+
+                        if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
+                            print('right edge')
+                        elif(last_valid[0] < tolerance): # close to left edge
+                            print('left edge')
+                        elif(abs(last_valid[1]-ymax) < tolerance): # close to top
+                            print('top edge')
+                        elif(last_valid[1] < tolerance): # bottom edge
+                            print('bottom edge')
+                        else:
+                            print('error')
+                    old_state = current_state
+
                 b_pressed = (wii.state.get('buttons') == 4)
 
-            #pdb.set_trace()
-            closed = cv.morphologyEx(map, cv.MORPH_CLOSE, kernel)
-            print('here')
-            #result = sp.correlate2d(closed, circle, mode='valid') / 30000.0
-            result = ss.pearsonr(closed.flatten(), circle.flatten())
-            print(result)
+
             run = (raw_input('Draw again? (y/n) ') == 'y')
     except(KeyboardInterrupt):
         print('Quitting...')
@@ -79,5 +96,6 @@ def cleanup(wii):
 
 if __name__ == "__main__":
     wii = connect()
+    calibrate(wii)
     poll(wii)
     cleanup(wii)
