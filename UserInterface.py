@@ -23,8 +23,10 @@ import pygameMenu
 import cwiid
 import time
 import json
+#import RPi.GPIO as GPIO
 from pygameMenu.locals import *
 
+#GPIO.setup(channel,GPIO.IN)
 
 POLL = pygame.USEREVENT
 
