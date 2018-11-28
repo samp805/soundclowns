@@ -66,7 +66,7 @@ surface.fill(COLOR_BACKGROUND)
 clock = pygame.time.Clock()
 dt = 1 / FPS
 myfont = pygame.font.Font(pygameMenu.fonts.FONT_BEBAS, 30)
-startsurface = myfont.render('Press enter after pressing 1 + 2  on  Wiimote', False, (0,0,0))
+startsurface = myfont.render('Press 1 + 2  on  Wiimote', False, (0,0,0))
 surface.blit(startsurface,(x/2-x/4,y/2))
 pygame.display.update()
 try:
