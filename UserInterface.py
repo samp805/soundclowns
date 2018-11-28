@@ -1,18 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-UserInterface.py
-
-Open a Pygame window and display framerate.
-Program terminates by pressing the ESCAPE-Key.
- 
-works with python2.7 and python3.4 
-
-Author : Kyle Bouwens
-License: GPL, see http://www.gnu.org/licenses/gpl.html
-"""
-
 #the next line is only needed for python2.x and not necessary for python3.x
 #import pygame and libraries
 from pygame.locals import *
@@ -50,9 +35,6 @@ xmax = 1024
 ymax = 768
 tolerance = 20
 
-
-
-
 pygame.init()
 pygame.font.init()
     
@@ -79,14 +61,14 @@ except(RuntimeError):
     time.sleep(5)
     raise
 successsurface = myfont.render('Connection Successful', False, (0,0,0))
+wiimote.rumble = 1
+time.sleep(0.5)
+wiimote.rumble = 0
 surface.blit(successsurface,(x/2-x/4,y/2+y/4))
 pygame.display.update()    
 
-# print initial state
 wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wiimote.led = 1
-time.sleep(1) # let the sensors wake up
-
 
 # -----------------------------------------------------------------------------
 
@@ -147,7 +129,6 @@ def wiidata(wm):
         clock.tick(30)
         
         # Application events
-        
         button = wm.state.get('buttons')
         pygame.event.post(pygame.event.Event(POLL)) 
         wmevents = pygame.event.get()
