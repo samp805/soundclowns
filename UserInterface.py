@@ -24,6 +24,15 @@ import cwiid
 import time
 import json
 from pygameMenu.locals import *
+import RPi.GPIO as GPIO
+
+chan_dict = {'right': 6, 'left':13, 'up':26, 'down':19}
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(chan_dict.values(), GPIO.OUT)
+GPIO.output(chan_dict['right'], GPIO.LOW)
+GPIO.output(chan_dict['left'], GPIO.LOW)
+GPIO.output(chan_dict['up'], GPIO.LOW)
+GPIO.output(chan_dict['down'], GPIO.LOW)
 
 
 POLL = pygame.USEREVENT
@@ -78,10 +87,6 @@ wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wiimote.led = 1
 time.sleep(1) # let the sensors wake up
 
-with open('./data/example.json', 'w+') as f:
-    f.write(json.dumps(wiimote.state, sort_keys=True, indent=4))
-
-
 
 # -----------------------------------------------------------------------------
 
@@ -99,10 +104,11 @@ def wait_for_b_press(wii):
             return True
 
 def calibrate(wii):
-    print('Gently move around the Wiimote to find the center')
+    calibratemessage = myfont.render('Gently move around the Wiimote to find the center', False, (0,0,0))
+    surface.blit(calibratemessage,(x/2-x/4,y/2))
+    pygame.display.update()
     center = (xmax/2, ymax/2)
     in_center = False
-    close = False
     while(not in_center):
         current_state = wii.state
         try:
@@ -111,8 +117,11 @@ def calibrate(wii):
         except TypeError: # means you moved out of the frame
             continue
         in_center = (abs(xcoord - center[0]) < tolerance) and (abs(ycoord-center[1]) < tolerance)
-
-    print('Found the center: {} ... stay there'.format(wii.state))
+    surface.fill(COLOR_BACKGROUND)
+    foundcenter = 'Found the center: {} ... stay there'.format(wii.state)
+    centermessage = myfont.render(foundcenter, False, (0,0,0))
+    surface.blit(centermessage,(x/2-x/4,y/2+y/4))
+    pygame.draw.circle(surface, COLOR_GREEN, (x/2, y/2), 50, 0)
     return
 
 def wiidata(wm):
@@ -127,6 +136,7 @@ def wiidata(wm):
 
     # have the user find the center
     calibrate(wm)
+    
     #KYLE: let the user know it's been calibrated
     bg_color = COLOR_BACKGROUND
     old_state = wm.state
@@ -150,7 +160,11 @@ def wiidata(wm):
                     main_menu.enable()
                     return
             elif e.type == POLL:
-                # KYLE: let them know to hold down B & get started
+                surface.fill(bg_color)
+                bmessage = 'Press and Hold B to get sound'
+                bsurface = myfont.render(bmessage, False,(0,0,0))
+                surface.blit(bsurface,(x/2-x/4,y/2-y/4))
+                pygame.display.update()
                 try:
                     old_state = wm.state
                     last_valid = (xmax/2, ymax/2)
@@ -167,44 +181,65 @@ def wiidata(wm):
                                     ycoord = current_state['ir_src'][0]['pos'][1]
                                     last_valid = (xcoord, ycoord)
                                     # print('x:  {}, y:  {}'.format(xcoord, ycoord))
+                                    position = 'x: {}, y: {}'.format(xcoord, ycoord)
+                                    positionmessage = myfont.render(position, False, (0,0,0))
+                                    surface.blit(positionmessage,(x/2-x/4,y/2+y/4))
+                                    pygame.display.update()
                                 except TypeError:
                                     # hitting this means you went out of frame somewhere
                                     # your last valid coordinates will be xcoord & ycoord
-            
+                                    surface.fill(bg_color)
                                     if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
-                                        print('right edge')
+                                        rightedge = myfont.render('right edge',False, (0,0,0))
+                                        surface.blit(rightedge, (x/2-x/4,y/2))
+                                        GPIO.output(chan_dict['up'], GPIO.LOW)
+                                        GPIO.output(chan_dict['down'], GPIO.LOW)
+                                        GPIO.output(chan_dict['left'], GPIO.LOW)
+                                        GPIO.output(chan_dict['right'], GPIO.HIGH)
                                     elif(last_valid[0] < tolerance): # close to left edge
-                                        print('left edge')
+                                        leftedge = myfont.render('left edge',False, (0,0,0))
+                                        surface.blit(leftedge, (x/2-x/4,y/2))
+                                        GPIO.output(chan_dict['up'], GPIO.LOW)
+                                        GPIO.output(chan_dict['down'], GPIO.LOW)
+                                        GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        GPIO.output(chan_dict['left'], GPIO.HIGH)
                                     elif(abs(last_valid[1]-ymax) < tolerance): # close to top
-                                        print('top edge')
+                                        topedge = myfont.render('top edge',False, (0,0,0))
+                                        surface.blit(topedge, (x/2-x/4,y/2))
+                                        GPIO.output(chan_dict['left'], GPIO.LOW)
+                                        GPIO.output(chan_dict['down'], GPIO.LOW)
+                                        GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        GPIO.output(chan_dict['up'], GPIO.HIGH)
                                     elif(last_valid[1] < tolerance): # bottom edge
-                                        print('bottom edge')
+                                        bottomedge = myfont.render('bottom edge',False, (0,0,0))
+                                        surface.blit(bottomedge, (x/2-x/4,y/2))
+                                        GPIO.output(chan_dict['up'], GPIO.LOW)
+                                        GPIO.output(chan_dict['left'], GPIO.LOW)
+                                        GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        GPIO.output(chan_dict['down'], GPIO.HIGH)
                                     else:
-                                        print('error')
+                                        # just ignore it in this case actually
+                                        pass
+                                    pygame.display.update()
                                 old_state = current_state
             
                             b_pressed = (wm.state.get('buttons') == 4)
-            
-            
-                        run = (raw_input('Draw again? (y/n) ') == 'y')
-                except(KeyboardInterrupt):
-                    print('Quitting...')
                         
                         
-                elif button == 128 and main_menu.is_disabled():
-                    main_menu.enable()
-                    return
-                else:
-                    pygame.display.flip()
-                    pygame.event.clear(POLL)
+                    if button == 128 and main_menu.is_disabled():
+                        main_menu.enable()
+                        return
+                    else:
+                        pygame.display.flip()
+                        pygame.event.clear(POLL)
 
-                                    
+                except KeyboardInterrupt:
+                    print('Quitting') # Kyle: Replace with UI message
+                    pass
 
-
-        # Pass events to main_menu
-        surface.fill(bg_color)
-        pygame.draw.circle(surface, COLOR_BLACK, (100, 100), 50, 0)
-        pygame.display.flip()
+                # Pass events to main_menu
+		surface.fill(bg_color)
+		pygame.display.flip()
 
 # -----------------------------------------------------------------------------
 # ABOUT US MENU
