@@ -151,9 +151,9 @@ def wiidata(wm):
                     last_valid = (xmax/2, ymax/2)
                     run = True
                     while(run):
-                        wait_for_b_press(wm)
-                        b_pressed = (wm.state.get('buttons') == 4)
-                        while(b_pressed):
+                        button = wm.state.get('buttons')
+                        # wait_for_b_press(wm)
+                        while(button == 4): # while b is pressed
                             current_state = wm.state
              
                             if (old_state != current_state):
@@ -204,15 +204,24 @@ def wiidata(wm):
                                     pygame.display.update()
                                 old_state = current_state
             
-                            b_pressed = (wm.state.get('buttons') == 4)
+                            button = wm.state.get('buttons')
                         
                         
-                    if button == 128 and main_menu.is_disabled():
-                        main_menu.enable()
-                        return
-                    else:
-                        pygame.display.flip()
-                        pygame.event.clear(POLL)
+                        if button == 128 and main_menu.is_disabled():
+                            main_menu.enable()
+                            return
+                        elif button == 16: # minus button will clear effects
+                            cleared = myfont.render('Cleared Effects',False, (0,0,0))
+                            surface.blit(cleared, (x/2-x/4,y/2))
+                            pygame.display.update()
+                            GPIO.output(chan_dict['up'], GPIO.LOW)
+                            GPIO.output(chan_dict['left'], GPIO.LOW)
+                            GPIO.output(chan_dict['right'], GPIO.LOW)
+                            GPIO.output(chan_dict['down'], GPIO.LOW)
+
+                        else:
+                            pygame.display.flip()
+                            pygame.event.clear(POLL)
 
                 except KeyboardInterrupt:
                     print('Quitting') # Kyle: Replace with UI message
