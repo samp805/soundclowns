@@ -115,12 +115,12 @@ def wiidata(wm):
 
     main_menu.disable()
     main_menu.reset(1)
-
+    bg_color = COLOR_BACKGROUND
+    surface.fill(bg_color)
     # have the user find the center
     calibrate(wm)
     
     #KYLE: let the user know it's been calibrated
-    bg_color = COLOR_BACKGROUND
     old_state = wm.state
 
     while True:
@@ -155,7 +155,7 @@ def wiidata(wm):
                         # wait_for_b_press(wm)
                         while(button == 4): # while b is pressed
                             current_state = wm.state
-             
+                            surface.fill(bg_color)
                             if (old_state != current_state):
                                 try:
                                     xcoord = current_state['ir_src'][0]['pos'][0]
@@ -203,14 +203,18 @@ def wiidata(wm):
                                         pass
                                     pygame.display.update()
                                 old_state = current_state
-            
+                            
                             button = wm.state.get('buttons')
                         
+
+                        surface.blit(bsurface,(x/2-x/4,y/2-y/4))
+                        pygame.display.update()
                         
                         if button == 128 and main_menu.is_disabled():
                             main_menu.enable()
                             return
                         elif button == 16: # minus button will clear effects
+                            surface.fill(bg_color)
                             cleared = myfont.render('Cleared Effects',False, (0,0,0))
                             surface.blit(cleared, (x/2-x/4,y/2))
                             pygame.display.update()
