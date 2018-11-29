@@ -22,7 +22,7 @@ GPIO.output(chan_dict['down'], GPIO.LOW)
 
 POLL = pygame.USEREVENT
 
-ABOUTUS = ['Matthew Bell','Kyle Bouwens','Timothy Kennedy','Sam Peters']
+ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam  Peters']
 
 COLOR_BACKGROUND = (128, 32, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -55,12 +55,12 @@ try:
     wiimote = cwiid.Wiimote()
 except(RuntimeError):
     surface.fill(COLOR_BACKGROUND)
-    failsurface = myfont.render('Failed to connect ... is Bluetooth on?', False, (0,0,0))
+    failsurface = myfont.render('Failed  to  connect ...  is  Bluetooth  on?', False, (0,0,0))
     surface.blit(failsurface,(x/2-x/4,y/2))
     pygame.display.update()
     time.sleep(5)
     raise
-successsurface = myfont.render('Connection Successful', False, (0,0,0))
+successsurface = myfont.render('Connection  Successful', False, (0,0,0))
 wiimote.rumble = 1
 time.sleep(0.5)
 wiimote.rumble = 0
@@ -86,7 +86,7 @@ def wait_for_b_press(wii):
             return True
 
 def calibrate(wii):
-    calibratemessage = myfont.render('Gently move around the Wiimote to find the center', False, (0,0,0))
+    calibratemessage = myfont.render('Gently  move  around  the  Wiimote  to  find  the  center', False, (0,0,0))
     surface.blit(calibratemessage,(x/2-x/4,y/2))
     pygame.display.update()
     center = (xmax/2, ymax/2)
@@ -100,11 +100,16 @@ def calibrate(wii):
             continue
         in_center = (abs(xcoord - center[0]) < tolerance) and (abs(ycoord-center[1]) < tolerance)
     surface.fill(COLOR_BACKGROUND)
-    foundcenter = 'Found the center: {} ... stay there'.format(wii.state)
+    foundcenter = 'Found  the  center:  X:{}  ,Y:{}  ...  stay  there'.format(xcoord,ycoord)
     centermessage = myfont.render(foundcenter, False, (0,0,0))
     surface.blit(centermessage,(x/2-x/4,y/2+y/4))
     pygame.draw.circle(surface, COLOR_GREEN, (x/2, y/2), 50, 0)
-    return
+    pygame.display.update()
+    wii.rumble = 1
+    time.sleep(0.5)
+    wii.rumble = 0
+    time.sleep(4.5)
+    return 
 
 def wiidata(wm):
     """
@@ -122,7 +127,6 @@ def wiidata(wm):
     
     #KYLE: let the user know it's been calibrated
     old_state = wm.state
-
     while True:
 
         # Clock tick
@@ -142,7 +146,7 @@ def wiidata(wm):
                     return
             elif e.type == POLL:
                 surface.fill(bg_color)
-                bmessage = 'Press and Hold B to get sound'
+                bmessage = 'Press  and  Hold  B  to  get  sound'
                 bsurface = myfont.render(bmessage, False,(0,0,0))
                 surface.blit(bsurface,(x/2-x/4,y/2-y/4))
                 pygame.display.update()
@@ -171,28 +175,28 @@ def wiidata(wm):
                                     # your last valid coordinates will be xcoord & ycoord
                                     surface.fill(bg_color)
                                     if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
-                                        rightedge = myfont.render('right edge',False, (0,0,0))
+                                        rightedge = myfont.render('right  edge',False, (0,0,0))
                                         surface.blit(rightedge, (x/2-x/4,y/2))
                                         GPIO.output(chan_dict['up'], GPIO.LOW)
                                         GPIO.output(chan_dict['down'], GPIO.LOW)
                                         GPIO.output(chan_dict['left'], GPIO.LOW)
                                         GPIO.output(chan_dict['right'], GPIO.HIGH)
                                     elif(last_valid[0] < tolerance): # close to left edge
-                                        leftedge = myfont.render('left edge',False, (0,0,0))
+                                        leftedge = myfont.render('left  edge',False, (0,0,0))
                                         surface.blit(leftedge, (x/2-x/4,y/2))
                                         GPIO.output(chan_dict['up'], GPIO.LOW)
                                         GPIO.output(chan_dict['down'], GPIO.LOW)
                                         GPIO.output(chan_dict['right'], GPIO.LOW)
                                         GPIO.output(chan_dict['left'], GPIO.HIGH)
                                     elif(abs(last_valid[1]-ymax) < tolerance): # close to top
-                                        topedge = myfont.render('top edge',False, (0,0,0))
+                                        topedge = myfont.render('top  edge',False, (0,0,0))
                                         surface.blit(topedge, (x/2-x/4,y/2))
                                         GPIO.output(chan_dict['left'], GPIO.LOW)
                                         GPIO.output(chan_dict['down'], GPIO.LOW)
                                         GPIO.output(chan_dict['right'], GPIO.LOW)
                                         GPIO.output(chan_dict['up'], GPIO.HIGH)
                                     elif(last_valid[1] < tolerance): # bottom edge
-                                        bottomedge = myfont.render('bottom edge',False, (0,0,0))
+                                        bottomedge = myfont.render('bottom  edge',False, (0,0,0))
                                         surface.blit(bottomedge, (x/2-x/4,y/2))
                                         GPIO.output(chan_dict['up'], GPIO.LOW)
                                         GPIO.output(chan_dict['left'], GPIO.LOW)
@@ -215,7 +219,7 @@ def wiidata(wm):
                             return
                         elif button == 16: # minus button will clear effects
                             surface.fill(bg_color)
-                            cleared = myfont.render('Cleared Effects',False, (0,0,0))
+                            cleared = myfont.render('Cleared  Effects',False, (0,0,0))
                             surface.blit(cleared, (x/2-x/4,y/2))
                             pygame.display.update()
                             GPIO.output(chan_dict['up'], GPIO.LOW)
@@ -260,7 +264,7 @@ about_us_menu = pygameMenu.TextMenu(surface,
 for m in ABOUTUS:
     about_us_menu.add_line(m)
 about_us_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-about_us_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+about_us_menu.add_option('Return  to  menu', PYGAME_MENU_BACK)
 
 # MAIN MENU
 main_menu = pygameMenu.Menu(surface,
@@ -276,14 +280,14 @@ main_menu = pygameMenu.Menu(surface,
                             onclose=PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             joystick_enabled= True,
-                            title='Sound Clowns',
+                            title='Sound  Clowns',
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0],
                             wiimote=wiimote
                             )
 
 main_menu.add_option('Start', wiidata, wiimote)
-main_menu.add_option('About Us', about_us_menu)
+main_menu.add_option('About  Us', about_us_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 # -----------------------------------------------------------------------------
