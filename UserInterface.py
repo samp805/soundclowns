@@ -10,19 +10,16 @@ import time
 import json
 from pygameMenu.locals import *
 import RPi.GPIO as GPIO
+import serial
+import math
 
-chan_dict = {'right': 6, 'left':13, 'up':26, 'down':19}
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(chan_dict.values(), GPIO.OUT)
-GPIO.output(chan_dict['right'], GPIO.LOW)
-GPIO.output(chan_dict['left'], GPIO.LOW)
-GPIO.output(chan_dict['up'], GPIO.LOW)
-GPIO.output(chan_dict['down'], GPIO.LOW)
 
 
 POLL = pygame.USEREVENT
 
 ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam  Peters']
+ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam Peters']
+chan_dict = {'right': 6, 'left':13, 'up':26, 'down':19}
 
 COLOR_BACKGROUND = (128, 32, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -34,6 +31,14 @@ MENU_BACKGROUND_COLOR = (228, 55, 36)
 xmax = 1024
 ymax = 768
 tolerance = 30
+PI = 3.14159265
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(chan_dict.values(), GPIO.OUT)
+GPIO.output(chan_dict['right'], GPIO.LOW)
+GPIO.output(chan_dict['left'], GPIO.LOW)
+GPIO.output(chan_dict['up'], GPIO.LOW)
+GPIO.output(chan_dict['down'], GPIO.LOW)
 
 pygame.init()
 pygame.font.init()
@@ -65,7 +70,23 @@ wiimote.rumble = 1
 time.sleep(0.5)
 wiimote.rumble = 0
 surface.blit(successsurface,(x/2-x/4,y/2+y/4))
-pygame.display.update()    
+pygame.display.update()
+
+# open serial connection
+try:
+    ser = serial.Serial('/dev/ttyUSB0',
+                        baudrate=115200,
+                        bytesize=serial.EIGHTBITS,
+                        parity=serial.PARITY_NONE,
+                        stopbits=serial.STOPBITS_ONE,
+                        write_timeout=3) # hopefully this stays constant but it might not
+except serial.serialutil.SerialException:
+    badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
+    surface.blit(badserial, (x/2-x/4, y/2+y/4))
+    pygame.display.update()
+    time.sleep(3)
+    raise
+
 
 wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wiimote.led = 1
@@ -120,20 +141,22 @@ def calibrate(wii):
     wii.rumble = 1
     time.sleep(0.5)
     wii.rumble = 0
-    time.sleep(4.5)
     return 
 
 def calc_roll(state):
-    a_x = current_state['acc'][0] - 125
-    a_y = current_state['acc'][1] - 126
-    a_z = current_state['acc'][2] - 1
+    a_x = state['acc'][0] - 125
+    a_y = state['acc'][1] - 126
+    a_z = state['acc'][2] - 151
     roll = math.atan2(a_x,a_z) if a_z != 0 else PI/2
     roll = roll - PI/2 if roll > 0 else roll + PI/2
     roll /= PI/2
-    return roll
+    roll += 1
+    roll /= 2
+    return roll * 100
 
-def write_usart(data):
-    #stuff
+def modulate_effect(state):
+    data = calc_roll(state)
+    ser.write(data)
 
 def wiidata(wm):
     """
@@ -151,6 +174,7 @@ def wiidata(wm):
     
     #KYLE: let the user know it's been calibrated
     old_state = wm.state
+    effect_on = False
     while True:
 
         # Clock tick
@@ -185,10 +209,11 @@ def wiidata(wm):
                             surface.fill(bg_color)
                             if (old_state != current_state):
                                 try:
+                                    if(effect_on):
+                                        modulate_effect(current_state)
                                     xcoord = current_state['ir_src'][0]['pos'][0]
                                     ycoord = current_state['ir_src'][0]['pos'][1]
                                     last_valid = (xcoord, ycoord)
-                                    # print('x:  {}, y:  {}'.format(xcoord, ycoord))
                                     position = 'x: {}, y: {}'.format(xcoord, ycoord)
                                     positionmessage = myfont.render(position, False, (0,0,0))
                                     surface.blit(positionmessage,(x/2-x/4,y/2))
@@ -206,6 +231,7 @@ def wiidata(wm):
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
                                         #GPIO.output(chan_dict['left'], GPIO.LOW)
                                         GPIO.output(chan_dict['left'], GPIO.HIGH)
+                                        effect_on = True
                                     elif(last_valid[0] < tolerance): # close to left edge
                                         rightedge = myfont.render('right  edge',False, COLOR_GREEN)
                                         surface.blit(rightedge, (7*x/8,y/2))
@@ -213,6 +239,7 @@ def wiidata(wm):
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
                                         #GPIO.output(chan_dict['right'], GPIO.LOW)
                                         GPIO.output(chan_dict['right'], GPIO.HIGH)
+                                        effect_on = True
                                     elif(abs(last_valid[1]-ymax) < tolerance): # close to top
                                         bottomedge = myfont.render('bottom  edge',False, COLOR_GREEN)
                                         surface.blit(bottomedge,(x/2,15*y/16))
@@ -220,6 +247,7 @@ def wiidata(wm):
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
                                         #GPIO.output(chan_dict['right'], GPIO.LOW)
                                         GPIO.output(chan_dict['down'], GPIO.HIGH)
+                                        effect_on = True
                                     elif(last_valid[1] < tolerance): # bottom edge 
                                         topedge = myfont.render('top  edge',False, COLOR_GREEN)
                                         surface.blit(topedge,(x/2,0))
@@ -227,6 +255,7 @@ def wiidata(wm):
                                         #GPIO.output(chan_dict['left'], GPIO.LOW)
                                         #GPIO.output(chan_dict['right'], GPIO.LOW)
                                         GPIO.output(chan_dict['up'], GPIO.HIGH)
+                                        effect_on = True
                                     else:
                                         # just ignore it in this case actually
                                         pass
@@ -251,6 +280,7 @@ def wiidata(wm):
                             GPIO.output(chan_dict['left'], GPIO.LOW)
                             GPIO.output(chan_dict['right'], GPIO.LOW)
                             GPIO.output(chan_dict['down'], GPIO.LOW)
+                            effect_on = False
 
                         else:
                             pygame.display.flip()
