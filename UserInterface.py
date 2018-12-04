@@ -33,7 +33,7 @@ FPS = 30.0
 MENU_BACKGROUND_COLOR = (228, 55, 36)
 xmax = 1024
 ymax = 768
-tolerance = 20
+tolerance = 30
 
 pygame.init()
 pygame.font.init()
@@ -80,13 +80,25 @@ def main_background():
     """
     surface.fill(COLOR_BACKGROUND)
 # -----------------------------------------------------------------------------
+def list_edges():
+    topedge = myfont.render('top  edge', False, (0,0,0))
+    bottomedge = myfont.render('bottom  edge', False, (0,0,0))
+    leftedge = myfont.render('left  edge', False, (0,0,0))
+    rightedge = myfont.render('right  edge',False, (0,0,0))
+    surface.blit(topedge,(x/2,0))
+    surface.blit(bottomedge,(x/2,15*y/16))
+    surface.blit(leftedge,(0,y/2))
+    surface.blit(rightedge,(7*x/8,y/2))
+    pygame.display.update()
+    return
+
 def wait_for_b_press(wii):
     while(True):
         if (wii.state['buttons'] == 4):
             return True
 
 def calibrate(wii):
-    calibratemessage = myfont.render('Gently  move  around  the  Wiimote  to  find  the  center', False, (0,0,0))
+    calibratemessage = myfont.render('Gently  move  the  Wiimote  to  find  the  center', False, (0,0,0))
     surface.blit(calibratemessage,(x/2-x/4,y/2))
     pygame.display.update()
     center = (xmax/2, ymax/2)
@@ -148,8 +160,7 @@ def wiidata(wm):
                 surface.fill(bg_color)
                 bmessage = 'Press  and  Hold  B  to  get  sound'
                 bsurface = myfont.render(bmessage, False,(0,0,0))
-                surface.blit(bsurface,(x/2-x/4,y/2-y/4))
-                pygame.display.update()
+                list_edges()
                 try:
                     old_state = wm.state
                     last_valid = (xmax/2, ymax/2)
@@ -168,40 +179,42 @@ def wiidata(wm):
                                     # print('x:  {}, y:  {}'.format(xcoord, ycoord))
                                     position = 'x: {}, y: {}'.format(xcoord, ycoord)
                                     positionmessage = myfont.render(position, False, (0,0,0))
-                                    surface.blit(positionmessage,(x/2-x/4,y/2+y/4))
+                                    surface.blit(positionmessage,(x/2-x/4,y/2))
                                     pygame.display.update()
+                                    list_edges()
                                 except TypeError:
                                     # hitting this means you went out of frame somewhere
                                     # your last valid coordinates will be xcoord & ycoord
                                     surface.fill(bg_color)
+                                    list_edges()
                                     if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
-                                        rightedge = myfont.render('right  edge',False, (0,0,0))
-                                        surface.blit(rightedge, (x/2-x/4,y/2))
-                                        GPIO.output(chan_dict['up'], GPIO.LOW)
-                                        GPIO.output(chan_dict['down'], GPIO.LOW)
-                                        GPIO.output(chan_dict['left'], GPIO.LOW)
-                                        GPIO.output(chan_dict['right'], GPIO.HIGH)
-                                    elif(last_valid[0] < tolerance): # close to left edge
-                                        leftedge = myfont.render('left  edge',False, (0,0,0))
-                                        surface.blit(leftedge, (x/2-x/4,y/2))
-                                        GPIO.output(chan_dict['up'], GPIO.LOW)
-                                        GPIO.output(chan_dict['down'], GPIO.LOW)
-                                        GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        leftedge = myfont.render('left  edge',False, COLOR_GREEN)
+                                        surface.blit(leftedge, (0,y/2))
+                                        #GPIO.output(chan_dict['up'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['down'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['left'], GPIO.LOW)
                                         GPIO.output(chan_dict['left'], GPIO.HIGH)
+                                    elif(last_valid[0] < tolerance): # close to left edge
+                                        rightedge = myfont.render('right  edge',False, COLOR_GREEN)
+                                        surface.blit(rightedge, (7*x/8,y/2))
+                                        #GPIO.output(chan_dict['up'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['down'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        GPIO.output(chan_dict['right'], GPIO.HIGH)
                                     elif(abs(last_valid[1]-ymax) < tolerance): # close to top
-                                        topedge = myfont.render('top  edge',False, (0,0,0))
-                                        surface.blit(topedge, (x/2-x/4,y/2))
-                                        GPIO.output(chan_dict['left'], GPIO.LOW)
-                                        GPIO.output(chan_dict['down'], GPIO.LOW)
-                                        GPIO.output(chan_dict['right'], GPIO.LOW)
-                                        GPIO.output(chan_dict['up'], GPIO.HIGH)
-                                    elif(last_valid[1] < tolerance): # bottom edge
-                                        bottomedge = myfont.render('bottom  edge',False, (0,0,0))
-                                        surface.blit(bottomedge, (x/2-x/4,y/2))
-                                        GPIO.output(chan_dict['up'], GPIO.LOW)
-                                        GPIO.output(chan_dict['left'], GPIO.LOW)
-                                        GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        bottomedge = myfont.render('bottom  edge',False, COLOR_GREEN)
+                                        surface.blit(bottomedge,(x/2,15*y/16))
+                                        #GPIO.output(chan_dict['left'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['down'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['right'], GPIO.LOW)
                                         GPIO.output(chan_dict['down'], GPIO.HIGH)
+                                    elif(last_valid[1] < tolerance): # bottom edge 
+                                        topedge = myfont.render('top  edge',False, COLOR_GREEN)
+                                        surface.blit(topedge,(x/2,0))
+                                        #GPIO.output(chan_dict['up'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['left'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['right'], GPIO.LOW)
+                                        GPIO.output(chan_dict['up'], GPIO.HIGH)
                                     else:
                                         # just ignore it in this case actually
                                         pass
@@ -210,7 +223,7 @@ def wiidata(wm):
                             
                             button = wm.state.get('buttons')
                         
-
+                        list_edges()
                         surface.blit(bsurface,(x/2-x/4,y/2-y/4))
                         pygame.display.update()
                         
