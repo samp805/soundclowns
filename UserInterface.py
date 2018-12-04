@@ -136,7 +136,17 @@ def calibrate(wii):
     time.sleep(4.5)
     return 
 
-def calc_ypr
+def calc_roll(state):
+    a_x = current_state['acc'][0] - 125
+    a_y = current_state['acc'][1] - 126
+    a_z = current_state['acc'][2] - 1
+    roll = math.atan2(a_x,a_z) if a_z != 0 else PI/2
+    roll = roll - PI/2 if roll > 0 else roll + PI/2
+    roll /= PI/2
+    return roll
+
+def write_usart(data):
+    #stuff
 
 def wiidata(wm):
     """
