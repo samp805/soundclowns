@@ -41,6 +41,8 @@ def poll(wii):
                 roll = math.atan2(a_x,a_z) if a_z != 0 else PI/2
                 roll = roll - PI/2 if roll > 0 else roll + PI/2
                 roll /= PI/2
+                roll += 1
+                roll /= 2
 
                 print('(x,y,z): ({},{},{}) || roll: {}'.format(a_x,a_y,a_z,roll))
 
