@@ -18,9 +18,6 @@ def connect():
     time.sleep(1) # let the sensors wake up
     print 'Initial state:  ' + str(wii.state)
 
-    with open('./data/example.json', 'w+') as f:
-        f.write(json.dumps(wii.state, sort_keys=True, indent=4))
-
     return wii
 
 
@@ -33,7 +30,16 @@ def poll(wii):
             b_pressed = (wii.state.get('buttons') == 4)
             current_state = wii.state
             if b_pressed and (old_state != current_state):
-                print(wii.state)
+                a_x = current_state['acc'][0] - 125
+                a_y = current_state['acc'][1] - 126
+                a_z = current_state['acc'][2] - 151
+
+                roll = math.atan2(a_x,a_z) if a_z != 0 else PI/2
+                roll = roll - PI/2 if roll > 0 else roll + PI/2
+                roll /= PI/2
+
+                print('(x,y,z): ({},{},{}) || roll: {}'.format(a_x,a_y,a_z,roll))
+
                 old_state = current_state
                 dt = time.time() - t0
                 t0 = time.time()
