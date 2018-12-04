@@ -10,6 +10,7 @@ import time
 import json
 from pygameMenu.locals import *
 import RPi.GPIO as GPIO
+import serial
 
 chan_dict = {'right': 6, 'left':13, 'up':26, 'down':19}
 GPIO.setmode(GPIO.BCM)
@@ -22,7 +23,7 @@ GPIO.output(chan_dict['down'], GPIO.LOW)
 
 POLL = pygame.USEREVENT
 
-ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam  Peters']
+ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam Peters']
 
 COLOR_BACKGROUND = (128, 32, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -59,13 +60,24 @@ except(RuntimeError):
     surface.blit(failsurface,(x/2-x/4,y/2))
     pygame.display.update()
     time.sleep(5)
-    raise
+    raise # so the program will exit if we can't connect
 successsurface = myfont.render('Connection  Successful', False, (0,0,0))
 wiimote.rumble = 1
 time.sleep(0.5)
 wiimote.rumble = 0
 surface.blit(successsurface,(x/2-x/4,y/2+y/4))
-pygame.display.update()    
+pygame.display.update()
+
+# open serial connection
+try:
+    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=3) # hopefully this stays constant but it might not
+except serial.serialutil.SerialException:
+    badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
+    surface.blit(badserial, (x/2-x/4, y/2+y/4))
+    pygame.display.update()
+    time.sleep(3)
+    raise
+
 
 wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
 wiimote.led = 1
@@ -79,6 +91,7 @@ def main_background():
     :return: None
     """
     surface.fill(COLOR_BACKGROUND)
+
 # -----------------------------------------------------------------------------
 def list_edges():
     topedge = myfont.render('top  edge', False, (0,0,0))
@@ -122,6 +135,8 @@ def calibrate(wii):
     wii.rumble = 0
     time.sleep(4.5)
     return 
+
+def calc_ypr
 
 def wiidata(wm):
     """
