@@ -102,10 +102,10 @@ def main_background():
     surface.fill(COLOR_BACKGROUND)
 # -----------------------------------------------------------------------------
 def list_edges():
-    topedge = myfont.render('top  edge', False, (0,0,0))
-    bottomedge = myfont.render('bottom  edge', False, (0,0,0))
-    leftedge = myfont.render('left  edge', False, (0,0,0))
-    rightedge = myfont.render('right  edge',False, (0,0,0))
+    topedge = myfont.render('Distortion', False, (0,0,0))
+    bottomedge = myfont.render('Stereo  Reverb', False, (0,0,0))
+    leftedge = myfont.render('Delay  Left  Speaker', False, (0,0,0))
+    rightedge = myfont.render('Delay  Right  Speaker',False, (0,0,0))
     surface.blit(topedge,(x/2,0))
     surface.blit(bottomedge,(x/2,15*y/16))
     surface.blit(leftedge,(0,y/2))
@@ -225,7 +225,7 @@ def wiidata(wm):
                                     surface.fill(bg_color)
                                     list_edges()
                                     if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
-                                        leftedge = myfont.render('left  edge',False, COLOR_GREEN)
+                                        leftedge = myfont.render('Delay  Left  Speaker',False, COLOR_GREEN)
                                         surface.blit(leftedge, (0,y/2))
                                         #GPIO.output(chan_dict['up'], GPIO.LOW)
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
@@ -233,7 +233,7 @@ def wiidata(wm):
                                         GPIO.output(chan_dict['left'], GPIO.HIGH)
                                         effect_on = True
                                     elif(last_valid[0] < tolerance): # close to left edge
-                                        rightedge = myfont.render('right  edge',False, COLOR_GREEN)
+                                        rightedge = myfont.render('Delay  Right  Speaker',False, COLOR_GREEN)
                                         surface.blit(rightedge, (7*x/8,y/2))
                                         #GPIO.output(chan_dict['up'], GPIO.LOW)
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
@@ -241,7 +241,7 @@ def wiidata(wm):
                                         GPIO.output(chan_dict['right'], GPIO.HIGH)
                                         effect_on = True
                                     elif(abs(last_valid[1]-ymax) < tolerance): # close to top
-                                        bottomedge = myfont.render('bottom  edge',False, COLOR_GREEN)
+                                        bottomedge = myfont.render('Stereo  Reverb',False, COLOR_GREEN)
                                         surface.blit(bottomedge,(x/2,15*y/16))
                                         #GPIO.output(chan_dict['left'], GPIO.LOW)
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
@@ -249,7 +249,7 @@ def wiidata(wm):
                                         GPIO.output(chan_dict['down'], GPIO.HIGH)
                                         effect_on = True
                                     elif(last_valid[1] < tolerance): # bottom edge 
-                                        topedge = myfont.render('top  edge',False, COLOR_GREEN)
+                                        topedge = myfont.render('Distortion',False, COLOR_GREEN)
                                         surface.blit(topedge,(x/2,0))
                                         #GPIO.output(chan_dict['up'], GPIO.LOW)
                                         #GPIO.output(chan_dict['left'], GPIO.LOW)
