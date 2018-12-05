@@ -43,7 +43,7 @@ pygame.init()
 pygame.font.init()
     
 # Create pygame screen and objects
-surface = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+surface = pygame.display.set_mode((0,0),pygame.FULLSCREEN|pygame.DOUBLEBUF|pygame.RESIZABLE)
 x = surface.get_width()
 y = surface.get_height()
 WINDOW_SIZE = (x,y)
@@ -111,7 +111,7 @@ def list_edges():
     surface.blit(topedge,(x/2,0))
     surface.blit(bottomedge,(x/2,15*y/16))
     surface.blit(leftedge,(0,y/2))
-    surface.blit(rightedge,(7*x/8,y/2))
+    surface.blit(rightedge,(3*x/4+x/32,y/2))
     pygame.display.update()
     return
 
@@ -175,13 +175,14 @@ def wiidata(wm):
     # have the user find the center
     calibrate(wm)
     
+    # Clock tick
+    clock.tick(30)
     #KYLE: let the user know it's been calibrated
     old_state = wm.state
     effect_on = False
     while True:
+        
 
-        # Clock tick
-        clock.tick(30)
         
         # Application events
         button = wm.state.get('buttons')
@@ -205,14 +206,16 @@ def wiidata(wm):
                     last_valid = (xmax/2, ymax/2)
                     run = True
                     while(run):
+                        
                         button = wm.state.get('buttons')
                         # wait_for_b_press(wm)
                         while(button == 4): # while b is pressed
+                            
                             current_state = wm.state
                             if(effect_on):
                                 pass
                                 # modulate_effect(current_state)
-                            surface.fill(bg_color)
+                            surface.fill(bg_color)    
                             if (old_state != current_state):
                                 try:
                                     xcoord = current_state['ir_src'][0]['pos'][0]
@@ -226,8 +229,7 @@ def wiidata(wm):
                                 except TypeError:
                                     # hitting this means you went out of frame somewhere
                                     # your last valid coordinates will be xcoord & ycoord
-                                    surface.fill(bg_color)
-                                    list_edges()
+                                    surface.fill(bg_color)            
                                     if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
                                         leftedge = myfont.render('Delay  Left  Speaker',False, COLOR_GREEN)
                                         surface.blit(leftedge, (0,y/2))
@@ -238,7 +240,7 @@ def wiidata(wm):
                                         effect_on = True
                                     elif(last_valid[0] < tolerance): # close to left edge
                                         rightedge = myfont.render('Delay  Right  Speaker',False, COLOR_GREEN)
-                                        surface.blit(rightedge, (7*x/8,y/2))
+                                        surface.blit(rightedge, (3*x/4+x/32,y/2))
                                         #GPIO.output(chan_dict['up'], GPIO.LOW)
                                         #GPIO.output(chan_dict['down'], GPIO.LOW)
                                         #GPIO.output(chan_dict['right'], GPIO.LOW)
@@ -268,10 +270,11 @@ def wiidata(wm):
                             
                             button = wm.state.get('buttons')
                         
-                        list_edges()
+                        surface.fill(bg_color)    
                         surface.blit(bsurface,(x/2-x/4,y/2-y/4))
                         pygame.display.update()
-                        
+                        list_edges()
+
                         if button == 128 and main_menu.is_disabled():
                             main_menu.enable()
                             return
@@ -287,7 +290,7 @@ def wiidata(wm):
                             effect_on = False
 
                         else:
-                            pygame.display.flip()
+                            #pygame.display.flip()
                             pygame.event.clear(POLL)
 
                 except KeyboardInterrupt:
@@ -296,7 +299,7 @@ def wiidata(wm):
 
                 # Pass events to main_menu
 		surface.fill(bg_color)
-		pygame.display.flip()
+		#pygame.display.flip()
 
 # -----------------------------------------------------------------------------
 # ABOUT US MENU
