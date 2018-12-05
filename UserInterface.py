@@ -158,7 +158,8 @@ def calc_roll(state):
 
 def modulate_effect(state):
     data = calc_roll(state)
-    ser.write(str(data).encode())
+    ser.write(str(int(data)).encode())
+    ser.flush()
 
 def wiidata(wm):
     """
