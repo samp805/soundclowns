@@ -18,7 +18,7 @@ import math
 POLL = pygame.USEREVENT
 
 ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam Peters']
-chan_dict = {'right': 6, 'left':13, 'up':26, 'down':19}
+chan_dict = {'chorus': 6, 'base_delay':13, 'trigger_delay':5, 'distortion':26, 'reverb':19}
 
 COLOR_BACKGROUND = (128, 32, 128)
 COLOR_BLACK = (0, 0, 0)
@@ -34,10 +34,11 @@ PI = 3.14159265
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(chan_dict.values(), GPIO.OUT)
-GPIO.output(chan_dict['right'], GPIO.LOW)
-GPIO.output(chan_dict['left'], GPIO.LOW)
-GPIO.output(chan_dict['up'], GPIO.LOW)
-GPIO.output(chan_dict['down'], GPIO.LOW)
+GPIO.output(chan_dict['chorus'], GPIO.LOW)
+GPIO.output(chan_dict['base_delay'], GPIO.LOW)
+GPIO.output(chan_dict['trigger_delay'], GPIO.LOW)
+GPIO.output(chan_dict['distortion'], GPIO.LOW)
+GPIO.output(chan_dict['reverb'], GPIO.LOW)
 
 pygame.init()
 pygame.font.init()
@@ -106,8 +107,8 @@ def main_background():
 def list_edges():
     topedge = myfont.render('Distortion', False, (0,0,0))
     bottomedge = myfont.render('Stereo  Reverb', False, (0,0,0))
-    leftedge = myfont.render('Delay  Left  Speaker', False, (0,0,0))
-    rightedge = myfont.render('Delay  Right  Speaker',False, (0,0,0))
+    leftedge = myfont.render('Delay', False, (0,0,0))
+    rightedge = myfont.render('Tremolo',False, (0,0,0))
     surface.blit(topedge,(x/2,0))
     surface.blit(bottomedge,(x/2,15*y/16))
     surface.blit(leftedge,(0,y/2))
@@ -191,7 +192,7 @@ def wiidata(wm):
             pygame.event.post(pygame.event.Event(POLL))
             if e.type == QUIT:
                 exit()
-            elif e.type == KEYDOWN  :
+            elif e.type == KEYDOWN:
                 if e.key == K_ESCAPE and main_menu.is_disabled():
                     main_menu.enable()
                     return
@@ -207,10 +208,10 @@ def wiidata(wm):
                     while(run):
                         button = wm.state.get('buttons')
                         # wait_for_b_press(wm)
-                        while(button == 4): # while b is pressed
+                        while((button == 4) or (button == 516) or (button == 260)): # while b is pressed
                             current_state = wm.state
-                            if(effect_on):
-                                modulate_effect(current_state)
+                            # if(effect_on):
+                            #    modulate_effect(current_state)
                             surface.fill(bg_color)
                             if (old_state != current_state):
                                 try:
@@ -226,38 +227,45 @@ def wiidata(wm):
                                     # hitting this means you went out of frame somewhere
                                     # your last valid coordinates will be xcoord & ycoord
                                     surface.fill(bg_color)
-                                    list_edges()
-                                    if(abs(last_valid[0]-xmax) < tolerance): # close to right edge
-                                        leftedge = myfont.render('Delay  Left  Speaker',False, COLOR_GREEN)
-                                        surface.blit(leftedge, (0,y/2))
-                                        #GPIO.output(chan_dict['up'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['down'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['left'], GPIO.LOW)
-                                        GPIO.output(chan_dict['left'], GPIO.HIGH)
-                                        effect_on = True
-                                    elif(last_valid[0] < tolerance): # close to left edge
-                                        rightedge = myfont.render('Delay  Right  Speaker',False, COLOR_GREEN)
+                                    
+                                    if(last_valid[0] < tolerance): # close to right edge
+                                        rightedge = myfont.render('Tremolo',False, COLOR_GREEN)
                                         surface.blit(rightedge, (7*x/8,y/2))
-                                        #GPIO.output(chan_dict['up'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['down'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['right'], GPIO.LOW)
-                                        GPIO.output(chan_dict['right'], GPIO.HIGH)
+                                        #GPIO.output(chan_dict['distortion'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['reverb'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['delay'], GPIO.LOW)
+                                        GPIO.output(chan_dict['chorus'], GPIO.HIGH)
                                         effect_on = True
-                                    elif(abs(last_valid[1]-ymax) < tolerance): # close to top
+                                    
+                                    if(abs(last_valid[0]-xmax) < tolerance): # close to left edge
+                                        leftedge = myfont.render('Delay',False, COLOR_GREEN)
+                                        GPIO.output(chan_dict['base_delay'], GPIO.HIGH)
+                                        if(button == 260): # user presses B+left
+                                            GPIO.output(chan_dict['trigger_delay'], GPIO.HIGH)
+                                            leftedge = myfont.render('Delay Left',False, COLOR_GREEN)
+                                        elif(button == 516): # user presses B+right
+                                            GPIO.output(chan_dict['trigger_delay'], GPIO.LOW)
+                                            leftedge = myfont.render('Delay Right', False, COLOR_GREEN)
+                                        surface.blit(leftedge, (0,y/2))
+                                        #GPIO.output(chan_dict['distortion'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['reverb'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['chorus'], GPIO.LOW)
+                                        effect_on = True
+                                    elif(abs(last_valid[1]-ymax) < tolerance): # bottom edge
                                         bottomedge = myfont.render('Stereo  Reverb',False, COLOR_GREEN)
                                         surface.blit(bottomedge,(x/2,15*y/16))
-                                        #GPIO.output(chan_dict['left'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['down'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['right'], GPIO.LOW)
-                                        GPIO.output(chan_dict['down'], GPIO.HIGH)
+                                        #GPIO.output(chan_dict['delay'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['reverb'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['chorus'], GPIO.LOW)
+                                        GPIO.output(chan_dict['reverb'], GPIO.HIGH)
                                         effect_on = True
-                                    elif(last_valid[1] < tolerance): # bottom edge 
+                                    elif(last_valid[1] < tolerance): # top edge 
                                         topedge = myfont.render('Distortion',False, COLOR_GREEN)
                                         surface.blit(topedge,(x/2,0))
-                                        #GPIO.output(chan_dict['up'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['left'], GPIO.LOW)
-                                        #GPIO.output(chan_dict['right'], GPIO.LOW)
-                                        GPIO.output(chan_dict['up'], GPIO.HIGH)
+                                        #GPIO.output(chan_dict['distortion'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['delay'], GPIO.LOW)
+                                        #GPIO.output(chan_dict['chorus'], GPIO.LOW)
+                                        GPIO.output(chan_dict['distortion'], GPIO.HIGH)
                                         effect_on = True
                                     else:
                                         # just ignore it in this case actually
@@ -272,6 +280,13 @@ def wiidata(wm):
                         pygame.display.update()
                         
                         if button == 128 and main_menu.is_disabled():
+                           
+                            GPIO.output(chan_dict['distortion'], GPIO.LOW)
+                            GPIO.output(chan_dict['base_delay'], GPIO.LOW)
+                            GPIO.output(chan_dict['trigger_delay'], GPIO.LOW)
+                            GPIO.output(chan_dict['chorus'], GPIO.LOW)
+                            GPIO.output(chan_dict['reverb'], GPIO.LOW)
+                            effect_on = False
                             main_menu.enable()
                             return
                         elif button == 16: # minus button will clear effects
@@ -279,10 +294,11 @@ def wiidata(wm):
                             cleared = myfont.render('Cleared  Effects',False, (0,0,0))
                             surface.blit(cleared, (x/2-x/4,y/2))
                             pygame.display.update()
-                            GPIO.output(chan_dict['up'], GPIO.LOW)
-                            GPIO.output(chan_dict['left'], GPIO.LOW)
-                            GPIO.output(chan_dict['right'], GPIO.LOW)
-                            GPIO.output(chan_dict['down'], GPIO.LOW)
+                            GPIO.output(chan_dict['distortion'], GPIO.LOW)
+                            GPIO.output(chan_dict['base_delay'], GPIO.LOW)
+                            GPIO.output(chan_dict['trigger_delay'], GPIO.LOW)
+                            GPIO.output(chan_dict['chorus'], GPIO.LOW)
+                            GPIO.output(chan_dict['reverb'], GPIO.LOW)
                             effect_on = False
 
                         else:
