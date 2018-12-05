@@ -72,21 +72,21 @@ surface.blit(successsurface,(x/2-x/4,y/2+y/4))
 pygame.display.update()
 
 # open serial connection
-try:
-    ser = serial.Serial('/dev/ttyUSB0',
-                        baudrate=115200,
-                        bytesize=serial.EIGHTBITS,
-                        parity=serial.PARITY_NONE,
-                        stopbits=serial.STOPBITS_ONE,
-                        write_timeout=3) # hopefully this stays constant but it might not
-    ser.close()
-    ser.open()
-except serial.serialutil.SerialException:
-    badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
-    surface.blit(badserial, (x/2-x/4, y/2+y/4))
-    pygame.display.update()
-    time.sleep(3)
-    raise
+# try:
+    # ser = serial.Serial('/dev/ttyUSB0',
+                        # baudrate=115200,
+                        # bytesize=serial.EIGHTBITS,
+                        # parity=serial.PARITY_NONE,
+                        # stopbits=serial.STOPBITS_ONE,
+                        # write_timeout=3) # hopefully this stays constant but it might not
+    # ser.close()
+    # ser.open()
+# except serial.serialutil.SerialException:
+    # badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
+    # surface.blit(badserial, (x/2-x/4, y/2+y/4))
+    # pygame.display.update()
+    # time.sleep(3)
+    # raise
 
 
 wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
@@ -210,7 +210,8 @@ def wiidata(wm):
                         while(button == 4): # while b is pressed
                             current_state = wm.state
                             if(effect_on):
-                                modulate_effect(current_state)
+                                pass
+                                # modulate_effect(current_state)
                             surface.fill(bg_color)
                             if (old_state != current_state):
                                 try:
