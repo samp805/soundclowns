@@ -156,7 +156,7 @@ def calc_roll(state):
 
 def modulate_effect(state):
     data = calc_roll(state)
-    ser.write(data)
+    ser.write(str(data))
 
 def wiidata(wm):
     """
@@ -206,11 +206,11 @@ def wiidata(wm):
                         # wait_for_b_press(wm)
                         while(button == 4): # while b is pressed
                             current_state = wm.state
+                            if(effect_on):
+                                modulate_effect(current_state)
                             surface.fill(bg_color)
                             if (old_state != current_state):
                                 try:
-                                    if(effect_on):
-                                        modulate_effect(current_state)
                                     xcoord = current_state['ir_src'][0]['pos'][0]
                                     ycoord = current_state['ir_src'][0]['pos'][1]
                                     last_valid = (xcoord, ycoord)
