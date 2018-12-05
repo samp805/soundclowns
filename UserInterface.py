@@ -17,7 +17,6 @@ import math
 
 POLL = pygame.USEREVENT
 
-ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam  Peters']
 ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam Peters']
 chan_dict = {'right': 6, 'left':13, 'up':26, 'down':19}
 
@@ -64,7 +63,7 @@ except(RuntimeError):
     surface.blit(failsurface,(x/2-x/4,y/2))
     pygame.display.update()
     time.sleep(5)
-    raise
+    raise # so the program will exit if we can't connect
 successsurface = myfont.render('Connection  Successful', False, (0,0,0))
 wiimote.rumble = 1
 time.sleep(0.5)
@@ -100,6 +99,7 @@ def main_background():
     :return: None
     """
     surface.fill(COLOR_BACKGROUND)
+
 # -----------------------------------------------------------------------------
 def list_edges():
     topedge = myfont.render('Distortion', False, (0,0,0))

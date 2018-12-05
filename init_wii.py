@@ -1,7 +1,11 @@
 import cwiid
 import time
 import json
+import math
 
+PI = 3.1459
+ACC_MAX = 255.0
+g = 9.807
 
 def connect():
     _ = raw_input('Press enter after pressing 1 + 2 on Wiimote\n')
@@ -41,11 +45,7 @@ def poll(wii):
                 roll /= 2
 
                 print('(x,y,z): ({},{},{}) || roll: {}'.format(a_x,a_y,a_z,roll))
-
                 old_state = current_state
-                dt = time.time() - t0
-                t0 = time.time()
-                print(dt)
     except(KeyboardInterrupt):
         print('Quitting...')
 
