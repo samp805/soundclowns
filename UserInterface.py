@@ -79,6 +79,8 @@ try:
                         parity=serial.PARITY_NONE,
                         stopbits=serial.STOPBITS_ONE,
                         write_timeout=3) # hopefully this stays constant but it might not
+    ser.close()
+    ser.open()
 except serial.serialutil.SerialException:
     badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
     surface.blit(badserial, (x/2-x/4, y/2+y/4))
@@ -156,7 +158,7 @@ def calc_roll(state):
 
 def modulate_effect(state):
     data = calc_roll(state)
-    ser.write(str(data))
+    ser.write(str(data).encode())
 
 def wiidata(wm):
     """
