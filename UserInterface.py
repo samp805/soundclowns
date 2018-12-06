@@ -77,23 +77,23 @@ surface.blit(successsurface,successrect)
 pygame.display.update()
 
 # open serial connection
-try:
-    ser = serial.Serial('/dev/ttyUSB0',
-                        baudrate=115200,
-                        bytesize=serial.EIGHTBITS,
-                        parity=serial.PARITY_NONE,
-                        stopbits=serial.STOPBITS_ONE,
-                        write_timeout=3) # hopefully this stays constant but it might not
-    ser.close()
-    ser.open()
-except serial.serialutil.SerialException:
-    surface.fill(COLOR_BACKGROUND)
-    badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
-    badrect = badserial.get_rect(center = (x/2,y/2))
-    surface.blit(badserial, badrect)
-    pygame.display.update()
-    time.sleep(3)
-    raise
+# try:
+    # ser = serial.Serial('/dev/ttyUSB0',
+                        # baudrate=115200,
+                        # bytesize=serial.EIGHTBITS,
+                        # parity=serial.PARITY_NONE,
+                        # stopbits=serial.STOPBITS_ONE,
+                        # write_timeout=3) # hopefully this stays constant but it might not
+    # ser.close()
+    # ser.open()
+# except serial.serialutil.SerialException:
+    # surface.fill(COLOR_BACKGROUND)
+    # badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
+    # badrect = badserial.get_rect(center = (x/2,y/2))
+    # surface.blit(badserial, badrect)
+    # pygame.display.update()
+    # time.sleep(3)
+    # raise
 
 
 wiimote.rpt_mode = cwiid.RPT_ACC | cwiid.RPT_IR | cwiid.RPT_BTN
@@ -167,10 +167,10 @@ def calc_roll(state):
     roll /= 2
     return roll * 100
 
-def modulate_effect(state):
-    data = calc_roll(state)
-    ser.write(str(int(data)).encode())
-    ser.flush()
+# def modulate_effect(state):
+    # data = calc_roll(state)
+    # ser.write(str(int(data)).encode())
+    # ser.flush()
 
 def wiidata(wm):
     """
