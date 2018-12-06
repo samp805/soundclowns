@@ -20,13 +20,13 @@ POLL = pygame.USEREVENT
 ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam Peters']
 chan_dict = {'chorus': 6, 'base_delay':13, 'trigger_delay':5, 'distortion':26, 'reverb':19}
 
-COLOR_BACKGROUND = (128, 32, 128)
+COLOR_BACKGROUND = (128, 128, 210)
 COLOR_BLACK = (0, 0, 0)
 COLOR_GREEN = (0, 255, 0)
 COLOR_RED = (255, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 30.0
-MENU_BACKGROUND_COLOR = (228, 55, 36)
+MENU_BACKGROUND_COLOR = (220, 180, 0)
 xmax = 1024
 ymax = 768
 tolerance = 30
@@ -53,23 +53,27 @@ surface.fill(COLOR_BACKGROUND)
 clock = pygame.time.Clock()
 dt = 1 / FPS
 myfont = pygame.font.Font(pygameMenu.fonts.FONT_BEBAS, 30)
-startsurface = myfont.render('Press 1 + 2  on  Wiimote', False, (0,0,0))
-surface.blit(startsurface,(x/2-x/4,y/2))
+myfont2 = pygame.font.Font(pygameMenu.fonts.FONT_BEBAS, 60)
+startsurface = myfont2.render('Press 1 + 2  on  Wiimote', False, (0,0,0))
+startrect = startsurface.get_rect(center=(x/2,y/2))
+surface.blit(startsurface,startrect)
 pygame.display.update()
 try:
     wiimote = cwiid.Wiimote()
 except(RuntimeError):
     surface.fill(COLOR_BACKGROUND)
     failsurface = myfont.render('Failed  to  connect ...  is  Bluetooth  on?', False, (0,0,0))
-    surface.blit(failsurface,(x/2-x/4,y/2))
+    failrect = failsurface.get_rect(center=(x/2,y/2))
+    surface.blit(failsurface,failrect)
     pygame.display.update()
     time.sleep(5)
     raise # so the program will exit if we can't connect
 successsurface = myfont.render('Connection  Successful', False, (0,0,0))
+successrect = successsurface.get_rect(center=(x/2,y/2+y/4))
 wiimote.rumble = 1
 time.sleep(0.5)
 wiimote.rumble = 0
-surface.blit(successsurface,(x/2-x/4,y/2+y/4))
+surface.blit(successsurface,successrect)
 pygame.display.update()
 
 # open serial connection
@@ -83,8 +87,10 @@ try:
     ser.close()
     ser.open()
 except serial.serialutil.SerialException:
+    surface.fill(COLOR_BACKGROUND)
     badserial = myfont.render('Could not open serial connection ... Quitting', False, (0,0,0))
-    surface.blit(badserial, (x/2-x/4, y/2+y/4))
+    badrect = badserial.get_rect(center = (x/2,y/2))
+    surface.blit(badserial, badrect)
     pygame.display.update()
     time.sleep(3)
     raise
@@ -105,14 +111,16 @@ def main_background():
 
 # -----------------------------------------------------------------------------
 def list_edges():
-    topedge = myfont.render('Distortion', False, (0,0,0))
-    bottomedge = myfont.render('Stereo  Reverb', False, (0,0,0))
-    leftedge = myfont.render('Delay', False, (0,0,0))
-    rightedge = myfont.render('Tremolo',False, (0,0,0))
-    surface.blit(topedge,(x/2,0))
-    surface.blit(bottomedge,(x/2,15*y/16))
-    surface.blit(leftedge,(0,y/2))
-    surface.blit(rightedge,(7*x/8,y/2))
+    topedge = myfont.render('Distortion', False, COLOR_RED)
+    toprect = topedge.get_rect(center=(x/2,y/16))
+    bottomedge = myfont.render('Stereo  Reverb', False, COLOR_RED)
+    bottomrect = bottomedge.get_rect(center=(x/2,15*y/16))
+    leftedge = myfont.render('Delay', False, COLOR_RED)
+    rightedge = myfont.render('Tremolo',False, COLOR_RED)
+    surface.blit(topedge,toprect)
+    surface.blit(bottomedge,bottomrect)
+    surface.blit(leftedge,(x/16,y/2))
+    surface.blit(rightedge,(13*x/16,y/2))
     pygame.display.update()
     return
 
@@ -123,7 +131,8 @@ def wait_for_b_press(wii):
 
 def calibrate(wii):
     calibratemessage = myfont.render('Gently  move  the  Wiimote  to  find  the  center', False, (0,0,0))
-    surface.blit(calibratemessage,(x/2-x/4,y/2))
+    calirect = calibratemessage.get_rect(center=(x/2,y/2))
+    surface.blit(calibratemessage,calirect)
     pygame.display.update()
     center = (xmax/2, ymax/2)
     in_center = False
@@ -138,7 +147,8 @@ def calibrate(wii):
     surface.fill(COLOR_BACKGROUND)
     foundcenter = 'Found  the  center:  X:{}  ,Y:{}  ...  stay  there'.format(xcoord,ycoord)
     centermessage = myfont.render(foundcenter, False, (0,0,0))
-    surface.blit(centermessage,(x/2-x/4,y/2+y/4))
+    centrect = centermessage.get_rect(center=(x/2,y/2+y/4))
+    surface.blit(centermessage,centrect)
     pygame.draw.circle(surface, COLOR_GREEN, (x/2, y/2), 50, 0)
     pygame.display.update()
     wii.rumble = 1
@@ -198,8 +208,15 @@ def wiidata(wm):
                     return
             elif e.type == POLL:
                 surface.fill(bg_color)
-                bmessage = 'Press  and  Hold  B  to  get  sound'
+                bmessage = 'Press  and  Hold  B  to  change  sound'
+                effectmessage = 'Swipe to chose effects'
+                minusmessage = 'Press minus to clear effects'
                 bsurface = myfont.render(bmessage, False,(0,0,0))
+                brect = bsurface.get_rect(center=(x/2, y/2 -3*y/8))
+                effectsurface = myfont.render(effectmessage, False, (0,0,0))
+                effectrect = effectsurface.get_rect(center =(x/2, y/2 - y/4))
+                minussurface = myfont.render(minusmessage, False, (0,0,0))
+                mrect = minussurface.get_rect(center = (x/2, y/2 - y/8))
                 list_edges()
                 try:
                     old_state = wm.state
@@ -220,7 +237,8 @@ def wiidata(wm):
                                     last_valid = (xcoord, ycoord)
                                     position = 'x: {}, y: {}'.format(xcoord, ycoord)
                                     positionmessage = myfont.render(position, False, (0,0,0))
-                                    surface.blit(positionmessage,(x/2-x/4,y/2))
+                                    positionrect = positionmessage.get_rect(center=(x/2,y/2))
+                                    surface.blit(positionmessage,positionrect)
                                     pygame.display.update()
                                     list_edges()
                                 except TypeError:
@@ -230,15 +248,18 @@ def wiidata(wm):
                                     
                                     if(last_valid[0] < tolerance): # close to right edge
                                         rightedge = myfont.render('Tremolo',False, COLOR_GREEN)
-                                        surface.blit(rightedge, (7*x/8,y/2))
+                                        surface.blit(rightedge, (13*x/16,y/2))
                                         #GPIO.output(chan_dict['distortion'], GPIO.LOW)
                                         #GPIO.output(chan_dict['reverb'], GPIO.LOW)
                                         #GPIO.output(chan_dict['delay'], GPIO.LOW)
                                         GPIO.output(chan_dict['chorus'], GPIO.HIGH)
                                         effect_on = True
                                     
-                                    if(abs(last_valid[0]-xmax) < tolerance): # close to left edge
+                                    elif(abs(last_valid[0]-xmax) < tolerance): # close to left edge
                                         leftedge = myfont.render('Delay',False, COLOR_GREEN)
+                                        delaymessage = 'Press <- or  -> while holing B to switch lead speaker'
+                                        delaysurface = myfont.render(delaymessage, False, (0,0,0))
+                                        
                                         GPIO.output(chan_dict['base_delay'], GPIO.HIGH)
                                         if(button == 260): # user presses B+left
                                             GPIO.output(chan_dict['trigger_delay'], GPIO.HIGH)
@@ -246,14 +267,16 @@ def wiidata(wm):
                                         elif(button == 516): # user presses B+right
                                             GPIO.output(chan_dict['trigger_delay'], GPIO.LOW)
                                             leftedge = myfont.render('Delay Right', False, COLOR_GREEN)
-                                        surface.blit(leftedge, (0,y/2))
+                                        surface.blit(delaysurface, (x/16, y/2 + y/8))
+                                        surface.blit(leftedge, (x/16,y/2))
                                         #GPIO.output(chan_dict['distortion'], GPIO.LOW)
                                         #GPIO.output(chan_dict['reverb'], GPIO.LOW)
                                         #GPIO.output(chan_dict['chorus'], GPIO.LOW)
                                         effect_on = True
                                     elif(abs(last_valid[1]-ymax) < tolerance): # bottom edge
                                         bottomedge = myfont.render('Stereo  Reverb',False, COLOR_GREEN)
-                                        surface.blit(bottomedge,(x/2,15*y/16))
+                                        bottomrect = bottomedge.get_rect(center=(x/2,15*y/16))
+                                        surface.blit(bottomedge,bottomrect)
                                         #GPIO.output(chan_dict['delay'], GPIO.LOW)
                                         #GPIO.output(chan_dict['reverb'], GPIO.LOW)
                                         #GPIO.output(chan_dict['chorus'], GPIO.LOW)
@@ -261,7 +284,8 @@ def wiidata(wm):
                                         effect_on = True
                                     elif(last_valid[1] < tolerance): # top edge 
                                         topedge = myfont.render('Distortion',False, COLOR_GREEN)
-                                        surface.blit(topedge,(x/2,0))
+                                        toprect = topedge.get_rect(center=(x/2,y/16))
+                                        surface.blit(topedge,toprect)
                                         #GPIO.output(chan_dict['distortion'], GPIO.LOW)
                                         #GPIO.output(chan_dict['delay'], GPIO.LOW)
                                         #GPIO.output(chan_dict['chorus'], GPIO.LOW)
@@ -269,14 +293,16 @@ def wiidata(wm):
                                         effect_on = True
                                     else:
                                         # just ignore it in this case actually
-                                        pass
+                                        list_edges()
                                     pygame.display.update()
                                 old_state = current_state
                             
                             button = wm.state.get('buttons')
                         
                         list_edges()
-                        surface.blit(bsurface,(x/2-x/4,y/2-y/4))
+                        surface.blit(bsurface,brect)
+                        surface.blit(effectsurface, effectrect)
+                        surface.blit(minussurface, mrect)
                         pygame.display.update()
                         
                         if button == 128 and main_menu.is_disabled():
@@ -292,7 +318,8 @@ def wiidata(wm):
                         elif button == 16: # minus button will clear effects
                             surface.fill(bg_color)
                             cleared = myfont.render('Cleared  Effects',False, (0,0,0))
-                            surface.blit(cleared, (x/2-x/4,y/2))
+                            clearrect = cleared.get_rect(center = (x/2,y/2))
+                            surface.blit(cleared, clearrect)
                             pygame.display.update()
                             GPIO.output(chan_dict['distortion'], GPIO.LOW)
                             GPIO.output(chan_dict['base_delay'], GPIO.LOW)
@@ -319,17 +346,17 @@ about_us_menu = pygameMenu.TextMenu(surface,
                                  bgfun=main_background,
                                  color_selected=COLOR_WHITE,
                                  font=pygameMenu.fonts.FONT_BEBAS,
-                                 font_color=COLOR_BLACK,
+                                 font_color=COLOR_WHITE,
                                  font_size_title=30,
                                  font_title=pygameMenu.fonts.FONT_8BIT,
                                  menu_color=MENU_BACKGROUND_COLOR,
-                                 menu_color_title=COLOR_WHITE,
+                                 menu_color_title=(0,0,255),
                                  menu_height=int(WINDOW_SIZE[1] * 0.6),
                                  menu_width=int(WINDOW_SIZE[0] * 0.6),
                                  onclose=PYGAME_MENU_DISABLE_CLOSE,
                                  option_shadow=False,
                                  joystick_enabled= True,
-                                 text_color=COLOR_BLACK,
+                                 text_color=COLOR_WHITE,
                                  text_fontsize=20,
                                  title='The Sound Clowns',
                                  window_height=WINDOW_SIZE[1],
@@ -345,8 +372,8 @@ main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
                             color_selected=COLOR_WHITE,
                             font=pygameMenu.fonts.FONT_BEBAS,
-                            font_color=COLOR_BLACK,
-                            font_size=30,
+                            font_color=COLOR_WHITE,
+                            font_size=60,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
                             menu_height=int(WINDOW_SIZE[1] * 0.6),
@@ -355,6 +382,7 @@ main_menu = pygameMenu.Menu(surface,
                             option_shadow=False,
                             joystick_enabled= True,
                             title='Sound  Clowns',
+                            menu_color_title = (0,0,255),
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0],
                             wiimote=wiimote
