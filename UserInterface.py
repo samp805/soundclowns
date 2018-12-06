@@ -17,7 +17,7 @@ import math
 
 POLL = pygame.USEREVENT
 
-ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam Peters']
+ABOUTUS = ['Matthew  Bell','Kyle  Bouwens','Timothy  Kennedy','Sam  Peters']
 chan_dict = {'chorus': 6, 'base_delay':13, 'trigger_delay':5, 'distortion':26, 'reverb':19}
 
 COLOR_BACKGROUND = (128, 128, 210)
@@ -344,7 +344,7 @@ def wiidata(wm):
 # ABOUT US MENU
 about_us_menu = pygameMenu.TextMenu(surface,
                                  bgfun=main_background,
-                                 color_selected=COLOR_WHITE,
+                                 color_selected=COLOR_BLACK,
                                  font=pygameMenu.fonts.FONT_BEBAS,
                                  font_color=COLOR_WHITE,
                                  font_size_title=30,
@@ -370,7 +370,7 @@ about_us_menu.add_option('Return  to  menu', PYGAME_MENU_BACK)
 # MAIN MENU
 main_menu = pygameMenu.Menu(surface,
                             bgfun=main_background,
-                            color_selected=COLOR_WHITE,
+                            color_selected=COLOR_BLACK,
                             font=pygameMenu.fonts.FONT_BEBAS,
                             font_color=COLOR_WHITE,
                             font_size=60,
