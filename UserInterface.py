@@ -121,7 +121,7 @@ def list_edges():
     surface.blit(bottomedge,bottomrect)
     surface.blit(leftedge,(x/16,y/2))
     surface.blit(rightedge,(13*x/16,y/2))
-    pygame.display.update()
+    pygame.display.flip()
     return
 
 def wait_for_b_press(wii):
@@ -251,7 +251,6 @@ def wiidata(wm):
                                     positionmessage = myfont.render(position, False, (0,0,0))
                                     positionrect = positionmessage.get_rect(center=(x/2,y/2))
                                     surface.blit(positionmessage,positionrect)
-                                    pygame.display.update()
                                     list_edges()
                                 except TypeError:
                                     # hitting this means you went out of frame somewhere
@@ -304,6 +303,7 @@ def wiidata(wm):
                                         GPIO.output(chan_dict['distortion'], GPIO.HIGH)
                                         effect_on = True
                                     else:
+                                        surface.fill(bg_color)
                                         # just ignore it in this case actually
                                         list_edges()
                                     pygame.display.update()
@@ -311,11 +311,11 @@ def wiidata(wm):
                             
                             button = wm.state.get('buttons')
                         
-                        list_edges()
+                        
                         surface.blit(bsurface,brect)
                         surface.blit(effectsurface, effectrect)
                         surface.blit(minussurface, mrect)
-                        pygame.display.update()
+                        list_edges()
                         
                         if button == 128 and main_menu.is_disabled():
                            
@@ -328,9 +328,10 @@ def wiidata(wm):
                             main_menu.enable()
                             return
                         elif button == 16: # minus button will clear effects
-                            surface.fill(bg_color)
+                            
                             cleared = myfont.render('Cleared  Effects',False, (0,0,0))
                             clearrect = cleared.get_rect(center = (x/2,y/2))
+                            pygame.draw.rect(surface, bg_color, clearrect, 0)
                             surface.blit(cleared, clearrect)
                             pygame.display.update()
                             GPIO.output(chan_dict['distortion'], GPIO.LOW)
@@ -341,7 +342,11 @@ def wiidata(wm):
                             effect_on = False
 
                         else:
-                            pygame.display.flip()
+                            surface.fill(bg_color)
+                            surface.blit(bsurface,brect)
+                            surface.blit(effectsurface,effectrect)
+                            surface.blit(minussurface,mrect)
+                            list_edges()
                             pygame.event.clear(POLL)
 
                 except KeyboardInterrupt:
