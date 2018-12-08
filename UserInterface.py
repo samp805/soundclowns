@@ -139,13 +139,23 @@ def calibrate(wii):
     while(not in_center):
         current_state = wii.state
         try:
+            surface.fill(COLOR_BACKGROUND)
             xcoord = current_state['ir_src'][0]['pos'][0]
             ycoord = current_state['ir_src'][0]['pos'][1]
+            xpos = xmax/2 - xcoord
+            ypos = ymax/2 - ycoord
+
+            position = 'x: {}, y: {}'.format(xpos, ypos)
+            positionmessage = myfont.render(position, False, (0,0,0))
+            positionrect = positionmessage.get_rect(center=(x/2,y/2+y/4))
+            surface.blit(positionmessage,positionrect)
+            surface.blit(calibratemessage,calirect)
+            pygame.display.update()
         except TypeError: # means you moved out of the frame
             continue
         in_center = (abs(xcoord - center[0]) < tolerance) and (abs(ycoord-center[1]) < tolerance)
     surface.fill(COLOR_BACKGROUND)
-    foundcenter = 'Found  the  center:  X:{}  ,Y:{}  ...  stay  there'.format(xcoord,ycoord)
+    foundcenter = 'Found  the  center:  X:{}  ,Y:{}  ...  stay  there'.format(xpos,ypos)
     centermessage = myfont.render(foundcenter, False, (0,0,0))
     centrect = centermessage.get_rect(center=(x/2,y/2+y/4))
     surface.blit(centermessage,centrect)
@@ -235,7 +245,9 @@ def wiidata(wm):
                                     xcoord = current_state['ir_src'][0]['pos'][0]
                                     ycoord = current_state['ir_src'][0]['pos'][1]
                                     last_valid = (xcoord, ycoord)
-                                    position = 'x: {}, y: {}'.format(xcoord, ycoord)
+                                    xpos = xmax/2 - xcoord
+                                    ypos = ymax/2 - ycoord
+                                    position = 'x: {}, y: {}'.format(xpos, ypos)
                                     positionmessage = myfont.render(position, False, (0,0,0))
                                     positionrect = positionmessage.get_rect(center=(x/2,y/2))
                                     surface.blit(positionmessage,positionrect)
