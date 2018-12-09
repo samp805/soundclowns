@@ -181,6 +181,40 @@ def calc_roll(state):
     # data = calc_roll(state)
     # ser.write(str(int(data)).encode())
     # ser.flush()
+def catimage(wm):
+
+    main_menu.disable()
+    main_menu.reset(1)
+    bg_color = COLOR_BACKGROUND
+    surface.fill(bg_color)
+    catim = pygame.image.load('cat.jpg')
+    catim = pygame.transform.scale(catim,(y,y))
+    catrect = catim.get_rect(center = (x/2,y/2))
+    surface.blit(catim,catrect)
+    pygame.display.update()
+    while True:
+        clock.tick(30)
+        
+        button = wm.state.get('buttons')
+        pygame.event.post(pygame.event.Event(POLL)) 
+        catevents = pygame.event.get()
+        for e in catevents:
+            pygame.event.post(pygame.event.Event(POLL))
+            if e.type == QUIT:
+                exit()
+            elif e.type == KEYDOWN:
+                if e.key == K_ESCAPE and main_menu.is_disabled():
+                    main_menu.enable()
+                    return
+            elif e.type == POLL:
+                 if button == 128 and main_menu.is_disabled():
+                     main_menu.enable()
+                     return
+            else: 
+                pygame.event.clear(POLL)
+            
+            # Pass events to main_menu
+	    pygame.display.flip()
 
 def wiidata(wm):
     """
@@ -407,6 +441,7 @@ main_menu = pygameMenu.Menu(surface,
 
 main_menu.add_option('Start', wiidata, wiimote)
 main_menu.add_option('About  Us', about_us_menu)
+main_menu.add_option('Team  Mascot', catimage, wiimote)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 # -----------------------------------------------------------------------------
