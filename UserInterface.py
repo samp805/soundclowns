@@ -345,17 +345,17 @@ def wiidata(wm):
                                         effect_on = True
                                     
                                     elif(abs(last_valid[0]-xmax) < tolerance): # close to left edge
-                                        leftedge = myfont.render('Delay  Left',False, COLOR_GREEN)
+                                        leftedge = myfont.render('Delay',False, COLOR_GREEN)
                                         delaymessage = 'Press <- or  -> while holing B to switch lead speaker'
                                         delaysurface = myfont.render(delaymessage, False, (0,0,0))
                                         
                                         GPIO.output(chan_dict['base_delay'], GPIO.HIGH)
                                         if(button == 260): # user presses B+left
                                             GPIO.output(chan_dict['trigger_delay'], GPIO.HIGH)
-                                            leftedge = myfont.render('Delay Left',False, COLOR_GREEN)
+                                            leftedge = myfont.render('Delay  Left',False, COLOR_GREEN)
                                         elif(button == 516): # user presses B+right
                                             GPIO.output(chan_dict['trigger_delay'], GPIO.LOW)
-                                            leftedge = myfont.render('Delay Right', False, COLOR_GREEN)
+                                            leftedge = myfont.render('Delay  Right', False, COLOR_GREEN)
                                         surface.blit(delaysurface, (x/16, y/2 + y/8))
                                         surface.blit(leftedge, (x/16,y/2))
                                         #GPIO.output(chan_dict['distortion'], GPIO.LOW)
