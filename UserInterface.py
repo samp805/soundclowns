@@ -24,6 +24,7 @@ COLOR_BACKGROUND = (128, 128, 210)
 COLOR_BLACK = (0, 0, 0)
 COLOR_GREEN = (0, 255, 0)
 COLOR_RED = (255, 0, 0)
+COLOR_ORANGE = (255, 215, 0)
 COLOR_WHITE = (255, 255, 255)
 FPS = 30.0
 MENU_BACKGROUND_COLOR = (220, 180, 0)
@@ -250,8 +251,8 @@ def wiidata(wm):
     calibrate(wm)
     hpon = False
     lpon = False
-    hpc = COLOR_RED
-    lpc = COLOR_RED
+    hpc = COLOR_ORANGE
+    lpc = COLOR_ORANGE
     #KYLE: let the user know it's been calibrated
     old_state = wm.state
     effect_on = False
@@ -302,7 +303,7 @@ def wiidata(wm):
                                 if(lpon):
                                     GPIO.output(chan_dict['lowpass'],GPIO.LOW)
                                     lpon = False
-                                    lpc = COLOR_RED
+                                    lpc = COLOR_ORANGE
                                 else:
                                     GPIO.output(chan_dict['lowpass'],GPIO.HIGH)
                                     lpon = True
@@ -311,7 +312,7 @@ def wiidata(wm):
                                 if(hpon):
                                     GPIO.output(chan_dict['highpass'],GPIO.LOW)
                                     hpon = False
-                                    hpc = COLOR_RED
+                                    hpc = COLOR_ORANGE
                                 else:
                                     GPIO.output(chan_dict['highpass'],GPIO.HIGH)
                                     hpon = True
@@ -408,8 +409,8 @@ def wiidata(wm):
                             GPIO.output(chan_dict['reverb'], GPIO.LOW)
                             GPIO.output(chan_dict['lowpass'], GPIO.LOW)
                             GPIO.output(chan_dict['highpass'], GPIO.LOW)
-                            lpc = COLOR_RED
-                            hpc = COLOR_RED
+                            lpc = COLOR_ORANGE
+                            hpc = COLOR_ORANGE
                             effect_on = False
                             main_menu.enable()
                             return
@@ -427,8 +428,8 @@ def wiidata(wm):
                             GPIO.output(chan_dict['reverb'], GPIO.LOW)
                             GPIO.output(chan_dict['lowpass'], GPIO.LOW)
                             GPIO.output(chan_dict['highpass'], GPIO.LOW)
-                            lpc = COLOR_RED
-                            hpc = COLOR_RED
+                            lpc = COLOR_ORANGE
+                            hpc = COLOR_ORANGE
                             effect_on = False
 
                         else:
